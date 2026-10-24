@@ -1,4 +1,4 @@
-// Builds the bookmarklet: dist/threadpress.js, dist/bookmarklet.txt and dist/install.html.
+// Builds the bookmarklet: dist/threadpress.js, dist/bookmarklet.txt, dist/install.html and docs/install.html.
 // Fails the build if the bundle contains anything that could send data off the device.
 
 import { build } from 'esbuild';
@@ -53,10 +53,10 @@ await writeFile('dist/bookmarklet.txt', bookmarklet);
 
 const template = await readFile('scripts/install.html', 'utf8');
 const attr = bookmarklet.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
-await writeFile(
-  'dist/install.html',
-  template.replaceAll('{{BOOKMARKLET}}', attr).replaceAll('{{VERSION}}', pkg.version),
-);
+const page = template.replaceAll('{{BOOKMARKLET}}', attr).replaceAll('{{VERSION}}', pkg.version);
+await writeFile('dist/install.html', page);
+// The install page people download, kept in the repository (CI checks it is up to date).
+await writeFile('docs/install.html', page);
 
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
 console.log(`threadpress.js ${kb(code.length)} · bookmarklet ${kb(bookmarklet.length)}`);

@@ -2,3 +2,4 @@ dist
 tests/fixtures
 tests/golden
 package-lock.json
+docs/install.html

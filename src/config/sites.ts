@@ -59,9 +59,8 @@ export const SITES: readonly SiteConfig[] = [
   },
 ];
 
-/** Where users report a broken site. Opened only when the user clicks the link.
- *  TODO(release): replace OWNER with the GitHub account that hosts the repository. */
-export const ISSUES_URL = 'https://github.com/OWNER/threadpress/issues/new';
+/** Where users report a broken site. Opened only when the user clicks the link. */
+export const ISSUES_URL = 'https://github.com/01ahsan/ThreadPress/issues/new';
 
 export function siteForUrl(url: URL): SiteConfig | undefined {
   return SITES.find((site) => {

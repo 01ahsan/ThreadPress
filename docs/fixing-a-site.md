@@ -37,8 +37,8 @@ node scripts/scrub-fixture.mjs "C:\Users\<you>\Downloads\threadpress-raw\raw-mat
 
 The script removes scripts, sidebars, account menus, email addresses, and the private parts of image links. Then **open the cleaned file and search it** (Ctrl+F) for your name, your email, your username, and the titles of your other chats. If anything is still there, delete it by hand.
 
-## 4. Ask for the fix
+## 4. Update the site's code
 
-Give Claude this prompt, filling in the site and the fixture names:
-
-> The `<site>` adapter needs updating. I saved new cleaned fixtures in `tests/fixtures/<site>/`: `<list of files>`. Read them, update `src/adapters/<site>.ts` (and `src/config/sites.ts` if the domains changed) so every message, role, model name, maths formula, code block, table and image is extracted correctly. Add or update the golden files for each fixture, review the goldens by eye, and make `npm run check` and `npm run test:e2e` pass. Do not log in to the site or access my accounts.
+1. Update `src/adapters/<site>.ts` (and `src/config/sites.ts` if the site's address changed) so every message, maths formula, code block, table and image is read correctly.
+2. Run `UPDATE_GOLDEN=1 npm test` to refresh the expected outputs in `tests/golden/<site>/`, and read them to check they look right.
+3. Run `npm run check` and `npm run test:e2e`. Both must pass.

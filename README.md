@@ -1,44 +1,50 @@
 # ThreadPress
 
-Export AI chat conversations, whole or in part, to clean files. Free and open source, with no accounts, limits or watermarks.
+Save your AI chats as files. Free, private, no sign-up.
 
-> **Status:** early development (milestone 1 of 6). ChatGPT works today; Claude, Gemini, Grok, DeepSeek and Kimi come next. PDF, Word, HTML and LaTeX exports are on the way.
+**Works on:** ChatGPT. Claude, Gemini, Grok, DeepSeek and Kimi are coming soon.
 
-## Use it
+**Saves as:** Markdown, JSON or plain text. PDF and Word are coming soon.
 
-1. Build it (see below) and open `dist/install.html`.
-2. Drag the **ThreadPress** button to your bookmarks bar.
-3. Open a chat and click the bookmark. Choose a format and press **Export whole chat**. To export only part of a chat, highlight it first.
+## Install (one time)
 
-| Format     | Notes                                                                           |
-| ---------- | ------------------------------------------------------------------------------- |
-| Markdown   | GitHub-flavoured, `$…$` / `$$…$$` maths, fenced code, tables, YAML front matter |
-| JSON       | The structured conversation (useful for your own tools)                         |
-| Plain text | UTF-8; maths kept as LaTeX                                                      |
+1. Open the [install page](docs/install.html) and click the **Download raw file** button (the ⬇ icon at the top right).
+2. Open the downloaded file in your browser.
+3. Drag the blue **ThreadPress** button onto your bookmarks bar.
 
-## Privacy
+Can't see the bookmarks bar? Press **Ctrl + Shift + B** (on a Mac: **⌘ + Shift + B**).
 
-ThreadPress runs only when you click it, on the page you are viewing, on your device. It:
+## Use
 
-- makes **no network requests** (the build fails if the code contains any network call);
-- never reads cookies, logins, or site storage, and stores nothing itself;
-- reads only the conversation, never the sidebar or your account details, and labels messages "You" and "Assistant";
-- leaves image addresses out by default, because they can contain private access tokens.
+1. Open a chat.
+2. Click the **ThreadPress** bookmark.
+3. Choose a format and click **Export whole chat**.
 
-## Build from source
+Want only part of a chat? Highlight it first, then click the bookmark.
 
-Requires Node.js 20.19 or newer.
+## Your privacy
+
+- Everything happens in your browser. Nothing is uploaded.
+- No account, no tracking, no ads.
+- Your name, email and other chats are never included in the file.
+
+## Problems?
+
+[Report a problem](https://github.com/01ahsan/ThreadPress/issues)
+
+---
+
+<details>
+<summary>For developers</summary>
 
 ```
 npm ci
-npm run check      # lint, type-check, unit tests, build
-npm run test:e2e   # end-to-end tests in Chromium (first run: npx playwright install chromium)
+npm run check
+npm run test:e2e
 ```
 
-The bookmarklet is written to `dist/bookmarklet.txt`, and an install page to `dist/install.html`.
+When a chat site changes its layout, see [docs/fixing-a-site.md](docs/fixing-a-site.md).
 
-When a site changes its layout, see [docs/fixing-a-site.md](docs/fixing-a-site.md).
+</details>
 
-## Licence
-
-MIT
+MIT licence
