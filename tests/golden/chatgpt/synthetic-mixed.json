@@ -1,0 +1,392 @@
+{
+  "version": 1,
+  "title": "Physics notes and a sorting question",
+  "site": "chatgpt",
+  "url": "https://chatgpt.com/c/6720aa00-1111-2222-3333-444455556666",
+  "exportedAt": "2026-10-24T12:00:00.000Z",
+  "messages": [
+    {
+      "role": "user",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Explain E = mc^2 briefly."
+            },
+            {
+              "type": "break"
+            },
+            {
+              "type": "text",
+              "text": "Also: what does *this* mean?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "বাংলায় একটি বাক্য লিখুন।"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "model": "gpt-5",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Mass–energy equivalence"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "The formula "
+            },
+            {
+              "type": "math",
+              "tex": "E = mc^2"
+            },
+            {
+              "type": "text",
+              "text": " says "
+            },
+            {
+              "type": "bold",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "mass"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": " and "
+            },
+            {
+              "type": "italic",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "energy"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": " are "
+            },
+            {
+              "type": "strike",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "different"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": " interchangeable. See "
+            },
+            {
+              "type": "link",
+              "href": "https://en.wikipedia.org/wiki/Mass%E2%80%93energy_equivalence",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Wikipedia"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": " or call "
+            },
+            {
+              "type": "code",
+              "text": "energy(m)"
+            },
+            {
+              "type": "text",
+              "text": ". It costs $5_000."
+            }
+          ]
+        },
+        {
+          "type": "math",
+          "tex": "\\begin{aligned} a &= \\frac{1}{2} \\\\ b &= \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} \\end{aligned}"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Steps"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            {
+              "blocks": [
+                {
+                  "type": "paragraph",
+                  "inlines": [
+                    {
+                      "type": "text",
+                      "text": "Measure mass."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "blocks": [
+                {
+                  "type": "paragraph",
+                  "inlines": [
+                    {
+                      "type": "text",
+                      "text": "Multiply by "
+                    },
+                    {
+                      "type": "math",
+                      "tex": "c^2"
+                    },
+                    {
+                      "type": "text",
+                      "text": ":"
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "ordered": false,
+                  "items": [
+                    {
+                      "blocks": [
+                        {
+                          "type": "paragraph",
+                          "inlines": [
+                            {
+                              "type": "text",
+                              "text": "nested "
+                            },
+                            {
+                              "type": "bold",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "text": "bold"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "text": " item"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "blocks": [
+                        {
+                          "type": "paragraph",
+                          "inlines": [
+                            {
+                              "type": "text",
+                              "text": "second nested"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "text": "def energy(m):\n    return m * 299_792_458 ** 2  # uses ``` fences"
+        },
+        {
+          "type": "table",
+          "align": [
+            "left",
+            "center",
+            "right"
+          ],
+          "header": [
+            [
+              {
+                "type": "text",
+                "text": "Quantity"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Symbol"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Value"
+              }
+            ]
+          ],
+          "rows": [
+            [
+              [
+                {
+                  "type": "text",
+                  "text": "Speed of light"
+                }
+              ],
+              [
+                {
+                  "type": "math",
+                  "tex": "c"
+                }
+              ],
+              [
+                {
+                  "type": "text",
+                  "text": "299 792 458 m/s"
+                }
+              ]
+            ],
+            [
+              [
+                {
+                  "type": "text",
+                  "text": "Pipe | char"
+                }
+              ],
+              [
+                {
+                  "type": "code",
+                  "text": "a|b"
+                }
+              ],
+              [
+                {
+                  "type": "text",
+                  "text": "1"
+                }
+              ]
+            ]
+          ]
+        },
+        {
+          "type": "blockquote",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "Energy cannot be created or destroyed."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "hr"
+        },
+        {
+          "type": "image",
+          "alt": "Diagram of energy"
+        },
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "উত্তর: শক্তি ও ভর সমতুল্য। 中文测试。 العربية"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "blocks": [
+        {
+          "type": "image",
+          "alt": "Uploaded image"
+        },
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Sort [3, 1, 2] in JS"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "model": "gpt-5-thinking",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Use "
+            },
+            {
+              "type": "code",
+              "text": "Array.prototype.toSorted"
+            },
+            {
+              "type": "text",
+              "text": ":"
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "language": "javascript",
+          "text": "const sorted = [3, 1, 2].toSorted((a, b) => a - b);"
+        },
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "1. This line starts like a list but is not one."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

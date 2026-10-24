@@ -1,0 +1,4 @@
+dist
+tests/fixtures
+tests/golden
+package-lock.json
