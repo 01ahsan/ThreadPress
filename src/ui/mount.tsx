@@ -11,10 +11,18 @@ export interface Mounted {
 export function mountPanel(doc: Document, url: URL): Mounted {
   const host = doc.createElement('threadpress-panel');
   const shadow = host.attachShadow({ mode: 'open' });
-  const style = doc.createElement('style');
-  style.textContent = PANEL_CSS;
+  // Constructed stylesheets are not subject to the page's style-src policy; <style> is the fallback.
+  try {
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(PANEL_CSS);
+    shadow.adoptedStyleSheets = [sheet];
+  } catch {
+    const style = doc.createElement('style');
+    style.textContent = PANEL_CSS;
+    shadow.append(style);
+  }
   const root = doc.createElement('div');
-  shadow.append(style, root);
+  shadow.append(root);
   doc.documentElement.appendChild(host);
 
   let open = false;

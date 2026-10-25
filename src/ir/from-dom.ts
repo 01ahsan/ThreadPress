@@ -398,7 +398,9 @@ function flattenBlock(b: Block): Inline[] {
 
 function alignOf(cell: Element | undefined): Align {
   if (!cell) return null;
-  const v = (cell.getAttribute('align') ?? (cell as HTMLElement).style?.textAlign ?? '').toLowerCase();
+  // Read the raw attribute: a strict page CSP can block inline styles, leaving element.style empty.
+  const fromStyle = /text-align\s*:\s*(\w+)/i.exec(cell.getAttribute('style') ?? '')?.[1];
+  const v = (cell.getAttribute('align') ?? fromStyle ?? '').toLowerCase();
   return v === 'left' || v === 'center' || v === 'right' ? v : null;
 }
 

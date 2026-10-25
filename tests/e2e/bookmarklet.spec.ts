@@ -3,6 +3,7 @@
 
 import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 const BOOKMARKLET = readFileSync('dist/bookmarklet.txt', 'utf8');
 const CODE = decodeURIComponent(BOOKMARKLET.slice('javascript:'.length));
@@ -115,4 +116,11 @@ test('the panel is keyboard operable', async ({ page }) => {
   await expect(panel.getByLabel('Markdown (.md)')).toBeFocused();
   await page.keyboard.press('ArrowDown');
   await expect(panel.getByLabel('JSON (.json)')).toBeChecked();
+});
+
+test('the install page link is exactly the bookmarklet', async ({ page }) => {
+  await page.goto(pathToFileURL('docs/index.html').href);
+  await expect(page.locator('h1')).toHaveCount(1);
+  const href = await page.getByRole('link', { name: 'ThreadPress', exact: true }).getAttribute('href');
+  expect(href).toBe(BOOKMARKLET);
 });

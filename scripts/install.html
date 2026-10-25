@@ -7,134 +7,368 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'none'; style-src 'unsafe-inline'; img-src data:"
     />
-    <title>ThreadPress</title>
+    <title>ThreadPress — save your AI chats</title>
     <style>
       :root {
-        --bg: #fafafa;
-        --fg: #1b1b1f;
-        --muted: #5b5b66;
-        --card: #fff;
-        --line: #dcdce3;
+        --bg: #f6f7fb;
+        --surface: #ffffff;
+        --fg: #15171e;
+        --muted: #5d6170;
+        --line: #e3e5ec;
         --accent: #2457c5;
+        --accent-soft: #e8eefb;
+        --accent-fg: #ffffff;
+        --kbd: #f0f1f5;
+        --shadow: 0 1px 2px rgba(20, 24, 40, 0.06), 0 8px 24px rgba(20, 24, 40, 0.06);
       }
       @media (prefers-color-scheme: dark) {
         :root {
-          --bg: #15161a;
-          --fg: #ececf1;
-          --muted: #a5a5b3;
-          --card: #1e1f24;
-          --line: #34353d;
-          --accent: #7aa2ff;
+          --bg: #101217;
+          --surface: #181b22;
+          --fg: #eceef4;
+          --muted: #9ea3b3;
+          --line: #2a2e38;
+          --accent: #7ea2ff;
+          --accent-soft: #1d2640;
+          --accent-fg: #0b1020;
+          --kbd: #232733;
+          --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
         }
+      }
+      * {
+        box-sizing: border-box;
       }
       body {
         margin: 0;
         background: var(--bg);
         color: var(--fg);
         font:
-          16px/1.6 system-ui,
+          17px/1.6 system-ui,
           -apple-system,
           'Segoe UI',
           Roboto,
           'Noto Sans',
           'Noto Sans Bengali',
           sans-serif;
+        -webkit-font-smoothing: antialiased;
       }
       main {
-        max-width: 680px;
+        max-width: 760px;
         margin: 0 auto;
-        padding: 40px 16px 64px;
+        padding: 56px 16px 72px;
+      }
+      a {
+        color: var(--accent);
+      }
+      :focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+        border-radius: 6px;
+      }
+
+      .hero {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      .hero svg {
+        width: 72px;
+        height: 72px;
+        border-radius: 18px;
+        box-shadow: var(--shadow);
       }
       h1 {
-        margin: 0 0 4px;
-        font-size: 32px;
+        font-size: clamp(30px, 6vw, 42px);
+        line-height: 1.15;
+        margin: 20px 0 10px;
+        letter-spacing: -0.02em;
       }
       .lede {
+        font-size: 19px;
         color: var(--muted);
-        margin: 0 0 28px;
+        margin: 0 auto;
+        max-width: 34em;
       }
-      .card {
-        background: var(--card);
+      .pills {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 20px;
+        padding: 0;
+        list-style: none;
+      }
+      .pills li {
+        background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 20px;
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 28px;
         margin: 0 0 20px;
+        box-shadow: var(--shadow);
+      }
+      .card h2 {
+        font-size: 22px;
+        margin: 0 0 4px;
+        letter-spacing: -0.01em;
+      }
+      .card .sub {
+        color: var(--muted);
+        margin: 0 0 22px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        font-weight: 650;
+        background: var(--accent);
+        color: var(--accent-fg);
+        padding: 12px 22px;
+        border-radius: 12px;
+      }
+      .btn svg {
+        width: 20px;
+        height: 20px;
       }
       .bm {
-        display: inline-block;
-        padding: 10px 18px;
-        border-radius: 10px;
-        background: var(--accent);
-        color: #fff;
-        font-weight: 650;
-        text-decoration: none;
         cursor: grab;
       }
-      @media (prefers-color-scheme: dark) {
-        .bm {
-          color: #0d1222;
+      .bm:active {
+        cursor: grabbing;
+      }
+
+      ol.steps {
+        list-style: none;
+        counter-reset: step;
+        padding: 0;
+        margin: 22px 0 0;
+      }
+      ol.steps > li {
+        counter-increment: step;
+        position: relative;
+        padding: 0 0 18px 48px;
+      }
+      ol.steps > li:last-child {
+        padding-bottom: 0;
+      }
+      ol.steps > li::before {
+        content: counter(step);
+        position: absolute;
+        left: 0;
+        top: -1px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: 15px;
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+      ol.steps > li:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 36px;
+        bottom: 4px;
+        width: 2px;
+        background: var(--line);
+      }
+      .hint {
+        display: block;
+        color: var(--muted);
+        font-size: 15px;
+      }
+      kbd,
+      code {
+        font:
+          600 14px/1 ui-monospace,
+          'Cascadia Mono',
+          Menlo,
+          monospace;
+        background: var(--kbd);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 3px 7px;
+        white-space: nowrap;
+      }
+
+      .use {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .use li {
+        background: var(--bg);
+        border-radius: 14px;
+        padding: 16px;
+      }
+      .use b {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .use span {
+        color: var(--muted);
+        font-size: 15px;
+      }
+      @media (max-width: 600px) {
+        .use {
+          grid-template-columns: 1fr;
+        }
+        .card {
+          padding: 22px 18px;
         }
       }
-      ol {
-        padding-left: 22px;
+
+      .privacy {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
       }
-      li {
-        margin: 6px 0;
+      .privacy svg {
+        flex: none;
+        width: 28px;
+        height: 28px;
+        color: var(--accent);
+        margin-top: 2px;
       }
-      textarea {
-        width: 100%;
-        height: 80px;
-        box-sizing: border-box;
-        font:
-          12px/1.4 ui-monospace,
-          monospace;
-        background: var(--bg);
-        color: var(--fg);
-        border: 1px solid var(--line);
-        border-radius: 8px;
+      .privacy p {
+        margin: 0;
       }
-      small {
+      footer {
+        text-align: center;
         color: var(--muted);
+        font-size: 14px;
+        margin-top: 32px;
       }
     </style>
   </head>
   <body>
     <main>
-      <h1>ThreadPress</h1>
-      <p class="lede">
-        Export AI chat conversations to Markdown, JSON or plain text. Free, open source, and it never sends
-        anything anywhere.
-      </p>
+      <header class="hero">
+        {{ICON}}
+        <h1>Save your AI chats as files</h1>
+        <p class="lede">Free and private. No sign-up, no limits, and nothing ever leaves your computer.</p>
+        <ul class="pills" aria-label="Works with">
+          <li>ChatGPT</li>
+          <li>Claude · soon</li>
+          <li>Gemini · soon</li>
+          <li>Grok · soon</li>
+          <li>DeepSeek · soon</li>
+          <li>Kimi · soon</li>
+        </ul>
+      </header>
 
-      <div class="card">
-        <p><strong>Drag this button to your bookmarks bar:</strong></p>
-        <p><a class="bm" href="{{BOOKMARKLET}}">ThreadPress</a></p>
-        <ol>
-          <li>Open a conversation on a supported site.</li>
-          <li>Click the <em>ThreadPress</em> bookmark. A small panel appears.</li>
-          <li>
-            Pick a format and click <em>Export whole chat</em>. To save only part of a chat, highlight it
-            first.
-          </li>
-        </ol>
-        <p>
-          <small
-            >Bookmarks bar hidden? Press Ctrl+Shift+B (⌘+Shift+B on Mac). On a phone, copy the code below into
-            a new bookmark's address, then type the bookmark's name in the address bar to run it.</small
+      <section class="card" aria-labelledby="chrome">
+        <h2 id="chrome">Chrome, Edge or Brave</h2>
+        <p class="sub">Takes about a minute, once.</p>
+        <a
+          class="btn"
+          href="https://github.com/01ahsan/ThreadPress/releases/latest/download/ThreadPress-extension.zip"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
           >
-        </p>
-        <textarea readonly aria-label="Bookmarklet code">{{BOOKMARKLET}}</textarea>
-      </div>
+            <path d="M12 4v11m-5-5 5 5 5-5M5 20h14" />
+          </svg>
+          Download ThreadPress
+        </a>
+        <ol class="steps">
+          <li>
+            Open the downloaded file and choose <b>Extract all</b>.
+            <span class="hint">On a Mac, just double-click it. You get a folder called ThreadPress.</span>
+          </li>
+          <li>
+            In the address bar, type <code>chrome://extensions</code> and press <kbd>Enter</kbd>.
+            <span class="hint"
+              >On Edge, type <code>edge://extensions</code>. On Brave, <code>brave://extensions</code>.</span
+            >
+          </li>
+          <li>
+            Turn on <b>Developer mode</b>.
+            <span class="hint">It's a switch at the top right (on Edge, at the left).</span>
+          </li>
+          <li>Click <b>Load unpacked</b> and select the <b>ThreadPress</b> folder.</li>
+          <li>Click the puzzle-piece icon next to the address bar and pin ThreadPress.</li>
+        </ol>
+      </section>
 
-      <div class="card">
-        <h2>Privacy</h2>
-        <p>
-          ThreadPress runs only when you click it, only on the page you are viewing, and only on your device.
-          It makes no network requests, reads no cookies or logins, stores nothing, and leaves your name and
-          account details out of exports.
+      <section class="card" aria-labelledby="firefox">
+        <h2 id="firefox">Firefox</h2>
+        <p class="sub">Drag this button onto your bookmarks bar.</p>
+        <a class="btn bm" href="{{BOOKMARKLET}}" title="Drag me to your bookmarks bar">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 3h12v18l-6-4-6 4z" />
+          </svg>
+          ThreadPress
+        </a>
+        <p class="hint" style="margin-top: 14px">
+          Can't see the bookmarks bar? Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>B</kbd> (Mac:
+          <kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>B</kbd>).
         </p>
-      </div>
-      <p><small>Version {{VERSION}} · MIT licence</small></p>
+      </section>
+
+      <section class="card" aria-labelledby="use">
+        <h2 id="use">How to use it</h2>
+        <p class="sub">Open any chat, then:</p>
+        <ul class="use">
+          <li><b>1. Click ThreadPress</b><span>The toolbar icon, or your bookmark in Firefox.</span></li>
+          <li><b>2. Pick a format</b><span>Markdown, JSON or plain text.</span></li>
+          <li><b>3. Click Export</b><span>The file lands in your Downloads.</span></li>
+        </ul>
+        <p class="hint" style="margin-top: 16px">Want just part of a chat? Highlight it first.</p>
+      </section>
+
+      <section class="card privacy" aria-label="Privacy">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+        <p>
+          <b>Your chats stay yours.</b> ThreadPress works entirely in your browser. It sends nothing anywhere,
+          needs no account, and never includes your name, email or other chats in the file.
+        </p>
+      </section>
+
+      <footer>
+        ThreadPress {{VERSION}} · Free and open source (MIT) ·
+        <a href="https://github.com/01ahsan/ThreadPress">GitHub</a>
+      </footer>
     </main>
   </body>
 </html>

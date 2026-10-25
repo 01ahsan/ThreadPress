@@ -1,9 +1,8 @@
-# Changelog
+# ThreadPress 0.1.0
 
-## 0.1.0 (unreleased)
+- Save ChatGPT conversations as Markdown, JSON or plain text, or copy them as Markdown.
+- Export a whole chat, or only the part you highlight.
+- Equations, code, tables and non-Latin text are kept intact.
+- Works entirely on your device: no account, no tracking, nothing uploaded.
 
-- Bookmarklet with an on-page export panel.
-- ChatGPT support: whole chats or a highlighted selection.
-- Export to Markdown, JSON and plain text; copy as Markdown.
-- Maths kept as LaTeX, code blocks with language, tables with alignment.
-- No network requests; image links left out unless you turn them on.
+Install: download **ThreadPress-extension.zip** below and follow the steps in the README.
