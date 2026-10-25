@@ -94,7 +94,24 @@ const manifest = {
   // color-mix() in the per-message button needs Chrome/Edge 111.
   minimum_chrome_version: '111',
 };
-await writeFile('dist/extension/manifest.json', JSON.stringify(manifest, null, 2) + '\n');
+const gecko = {
+  gecko: {
+    id: 'threadpress@01ahsan.github.io',
+    strict_min_version: '140.0',
+    // Firefox Add-ons requires new extensions to declare data collection: ThreadPress collects none.
+    data_collection_permissions: { required: ['none'] },
+  },
+  gecko_android: { strict_min_version: '142.0' },
+};
+// The download on GitHub works in both browsers: Chrome uses service_worker and Firefox uses
+// scripts (Chrome accepts both keys since version 121; Firefox ignores service_worker).
+const universal = {
+  ...manifest,
+  background: { service_worker: 'background.js', scripts: ['background.js'] },
+  browser_specific_settings: gecko,
+  minimum_chrome_version: '121',
+};
+await writeFile('dist/extension/manifest.json', JSON.stringify(universal, null, 2) + '\n');
 await writeFile('dist/extension/content.js', await bundle('src/extension/content.ts'));
 await writeFile('dist/extension/background.js', await bundle('src/extension/background.ts'));
 for (const size of [16, 32, 48, 128]) {
@@ -132,31 +149,19 @@ await writeFile('dist/ThreadPress-extension.zip', zip(entries));
 // Store uploads need manifest.json at the zip root.
 const rootEntries = entries.map((e) => ({ ...e, name: e.name.replace(/^ThreadPress\//, '') }));
 await mkdir('dist/store', { recursive: true });
-await writeFile('dist/store/chrome-edge.zip', zip(rootEntries));
+// Store packages carry only their own browser's keys, so store reviews see no unknown keys.
+const withManifest = (m) =>
+  rootEntries.map((e) =>
+    e.name === 'manifest.json' ? { ...e, data: Buffer.from(JSON.stringify(m, null, 2) + '\n') } : e,
+  );
+await writeFile('dist/store/chrome-edge.zip', zip(withManifest(manifest)));
 const firefoxManifest = {
   ...manifest,
   background: { scripts: ['background.js'] },
-  browser_specific_settings: {
-    gecko: {
-      id: 'threadpress@01ahsan.github.io',
-      strict_min_version: '140.0',
-      // Firefox Add-ons requires new extensions to declare data collection: ThreadPress collects none.
-      data_collection_permissions: { required: ['none'] },
-    },
-    gecko_android: { strict_min_version: '142.0' },
-  },
+  browser_specific_settings: gecko,
 };
 delete firefoxManifest.minimum_chrome_version;
-await writeFile(
-  'dist/store/firefox.zip',
-  zip(
-    rootEntries.map((e) =>
-      e.name === 'manifest.json'
-        ? { ...e, data: Buffer.from(JSON.stringify(firefoxManifest, null, 2) + '\n') }
-        : e,
-    ),
-  ),
-);
+await writeFile('dist/store/firefox.zip', zip(withManifest(firefoxManifest)));
 
 // ---- Bookmarklet ----
 const code = await bundle('src/bookmarklet/main.ts');

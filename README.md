@@ -18,7 +18,10 @@ That's it: an **Export chat** button now appears on the right edge of every AI c
 
 ## Install on Firefox
 
-Open the [install page](docs/index.html), click **Download raw file**, open the downloaded file, and drag the **ThreadPress** button onto your bookmarks bar.
+ThreadPress is coming to Firefox Add-ons. Until then, either:
+
+- **Try it now:** extract the same download, type `about:debugging#/runtime/this-firefox` in the address bar, click **Load Temporary Add-on…**, and pick `manifest.json` in the **ThreadPress** folder. Firefox removes it when it restarts.
+- **Use the bookmark:** open the [install page](docs/index.html), click **Download raw file**, open the file, and drag the **ThreadPress** button onto your bookmarks bar.
 
 ## Use
 

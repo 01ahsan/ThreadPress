@@ -2,6 +2,10 @@
 
 All notable changes to ThreadPress. Versions follow [semantic versioning](https://semver.org).
 
+## 0.6.2 (2026-10-25)
+
+- The download now also installs in Firefox (it showed "background.service_worker is currently disabled"). Chrome and Edge need version 121 or newer.
+
 ## 0.6.1 (2026-10-25)
 
 - The store name is now "ThreadPress - AI Chat Exporter".
