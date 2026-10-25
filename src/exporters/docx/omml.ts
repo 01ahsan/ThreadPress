@@ -7,8 +7,28 @@ import type { MathNode } from '../../ir/types';
 const NARY = new Set(['∑', '∏', '∐', '∫', '∬', '∭', '∮', '∯', '∰', '⋃', '⋂', '⋁', '⋀', '⨁', '⨂', '⨀']);
 const FENCES = new Set(['(', ')', '[', ']', '{', '}', '|', '‖', '⟨', '⟩', '⌊', '⌋', '⌈', '⌉', '']);
 
+/** Escapes XML special characters and drops characters XML cannot hold at all. */
+/** XML 1.0 forbids most control characters. */
+function stripInvalid(s: string): string {
+  // Compared by code point so the bundle never contains these characters literally.
+  let out = '';
+  for (const ch of s) {
+    const c = ch.codePointAt(0) as number;
+    if (
+      c === 9 ||
+      c === 10 ||
+      c === 13 ||
+      (c >= 0x20 && c <= 0xd7ff) ||
+      (c >= 0xe000 && c <= 0xfffd) ||
+      c >= 0x10000
+    )
+      out += ch;
+  }
+  return out;
+}
+
 export function xmlEscape(s: string): string {
-  return s.replace(
+  return stripInvalid(s).replace(
     /[&<>"]/g,
     (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] as string,
   );

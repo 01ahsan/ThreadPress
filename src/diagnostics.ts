@@ -42,7 +42,9 @@ export function layoutReport(doc: Document, url: URL): string {
         if (name === 'href' || name === 'src') s += ` ${name}`;
         continue;
       }
-      s += SAFE_VALUE.test(value) ? ` ${name}="${value}"` : ` ${name}`;
+      // Values that look like account or conversation IDs are masked.
+      const idLike = /[0-9]/.test(value) && value.replace(/[^A-Za-z0-9]/g, '').length >= 12;
+      s += SAFE_VALUE.test(value) ? ` ${name}="${idLike ? ':id' : value}"` : ` ${name}`;
     }
     const style = el instanceof HTMLElement ? getComputedStyle(el) : null;
     if (

@@ -13,7 +13,12 @@ export function currentRanges(doc: Document, ignore?: Node): Range[] {
   const out: Range[] = [];
   for (let i = 0; i < sel.rangeCount; i++) {
     const r = sel.getRangeAt(i);
-    if (!ignore || !ignore.contains(r.commonAncestorContainer)) out.push(r.cloneRange());
+    const node = r.commonAncestorContainer;
+    const el = node.nodeType === 1 ? (node as Element) : node.parentElement;
+    // Text being typed in the chat box is not something to export.
+    if (el?.closest('input, textarea, [contenteditable=""], [contenteditable="true"], [role="textbox"]'))
+      continue;
+    if (!ignore || !ignore.contains(node)) out.push(r.cloneRange());
   }
   return out;
 }

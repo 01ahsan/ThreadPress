@@ -1,0 +1,71 @@
+<!doctype html>
+<!-- Neutral demo chat used only to take store screenshots. Its markup follows the layout the
+     ChatGPT reader understands, but it is styled plainly so it does not imitate any product. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Physics study notes - ChatGPT</title>
+<style>
+  body { margin: 0; background: #f4f5f8; color: #1d2027; font: 15px/1.6 system-ui, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Bengali", sans-serif; }
+  header { height: 52px; display: flex; align-items: center; padding: 0 24px; background: #fff; border-bottom: 1px solid #e3e5ec; font-weight: 650; }
+  .thread-scroll-container { height: calc(100vh - 52px); overflow-y: auto; display: flex; flex-direction: column-reverse; }
+  .thread { max-width: 760px; margin: 0 auto; padding: 24px 24px 80px; width: 100%; box-sizing: border-box; }
+  section.group { margin: 0 0 22px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .user-row { display: flex; justify-content: flex-end; }
+  .bubble { background: #e4e9f7; border-radius: 16px; padding: 10px 16px; max-width: 75%; }
+  .markdown { background: #fff; border: 1px solid #e6e8ee; border-radius: 14px; padding: 4px 18px; }
+  pre { background: #f6f7f9; border-radius: 8px; padding: 10px 12px; overflow: auto; }
+  table { border-collapse: collapse; margin: 8px 0 12px; } th, td { border: 1px solid #dde0e7; padding: 4px 10px; }
+  .katex-display { display: block; text-align: center; margin: 10px 0; }
+  .katex-html { display: none; }
+  .tools { display: flex; gap: 2px; margin-top: 4px; color: #6b7080; }
+  .tools button { width: 30px; height: 30px; border: 0; background: none; border-radius: 8px; color: inherit; cursor: pointer; display: grid; place-items: center; }
+  .tools button:hover { background: #e6e8ee; }
+  .tools svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<header>Study chat</header>
+<main>
+<div class="thread-scroll-container">
+<div class="thread">
+  <section class="group">
+    <h4 class="sr-only">You said:</h4>
+    <div class="user-row"><div class="bubble"><div class="whitespace-pre-wrap">How do I solve a quadratic equation? Show the formula and a quick Python check.</div></div></div>
+  </section>
+  <section class="group">
+    <h4 class="sr-only">ChatGPT said:</h4>
+    <div class="markdown">
+      <p>For <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mi>b</mi><mi>x</mi><mo>+</mo><mi>c</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">ax^2+bx+c=0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"></span></span>, the solutions are:</p>
+      <span class="katex-display"><span class="katex"><span class="katex-mathml"><math display="block"><semantics><mrow><mi>x</mi><mo>=</mo><mfrac><mrow><mo>−</mo><mi>b</mi><mo>±</mo><msqrt><mrow><msup><mi>b</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn><mi>a</mi><mi>c</mi></mrow></msqrt></mrow><mrow><mn>2</mn><mi>a</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"></span></span></span>
+      <pre><code class="language-python">import math
+a, b, c = 1, -5, 6
+d = math.sqrt(b*b - 4*a*c)
+print((-b + d) / (2*a), (-b - d) / (2*a))  # 3.0 2.0</code></pre>
+      <table><thead><tr><th>Discriminant</th><th>Roots</th></tr></thead><tbody><tr><td>&gt; 0</td><td>two real</td></tr><tr><td>= 0</td><td>one real</td></tr><tr><td>&lt; 0</td><td>two complex</td></tr></tbody></table>
+    </div>
+    <div class="tools">
+      <button aria-label="Copy"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button>
+      <button aria-label="Good response"><svg viewBox="0 0 24 24"><path d="M7 10v10H4V10zM7 10l4-7a2 2 0 0 1 3 2l-1 5h6a2 2 0 0 1 2 2l-2 7a2 2 0 0 1-2 1H7"/></svg></button>
+    </div>
+  </section>
+  <section class="group">
+    <h4 class="sr-only">You said:</h4>
+    <div class="user-row"><div class="bubble"><div class="whitespace-pre-wrap">বাংলায় সংক্ষেপে ব্যাখ্যা করুন।</div></div></div>
+  </section>
+  <section class="group">
+    <h4 class="sr-only">ChatGPT said:</h4>
+    <div class="markdown">
+      <p>দ্বিঘাত সমীকরণের দুটি মূল <strong>নিরূপক</strong> <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>b</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn><mi>a</mi><mi>c</mi></mrow><annotation encoding="application/x-tex">b^2-4ac</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"></span></span> এর উপর নির্ভর করে।</p>
+    </div>
+    <div class="tools">
+      <button aria-label="Copy"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button>
+      <button aria-label="Good response"><svg viewBox="0 0 24 24"><path d="M7 10v10H4V10zM7 10l4-7a2 2 0 0 1 3 2l-1 5h6a2 2 0 0 1 2 2l-2 7a2 2 0 0 1-2 1H7"/></svg></button>
+    </div>
+  </section>
+</div>
+</div>
+</main>
+</body>
+</html>

@@ -175,8 +175,19 @@ function block(b: Block, opts: ExportOptions): string[] {
   }
 }
 
+// Primitives that read or write files, run programs or rewrite TeX itself. Maths copied from
+// a web page must never be able to do that when the user compiles the file, so these are
+// printed as text instead of executed.
+const DANGEROUS =
+  /\\(write18|immediate|write|input|include|InputIfFileExists|openin|openout|read|readline|catcode|directlua|latelua|luaexec|luadirect|newread|newwrite|special|usepackage|RequirePackage|documentclass|def|gdef|edef|xdef|csname|scantokens|endinput|shipout|everyeof|everyjob|everymath|everydisplay|pdfprimitive|primitive)(?![a-zA-Z])/g;
+
+export function safeTex(tex: string): string {
+  return tex.replace(DANGEROUS, '\\backslash\\mathtt{$1}');
+}
+
 /** Display maths: environments that are already display-level stand alone; everything else goes in \[ \]. */
-function displayMath(tex: string): string[] {
+function displayMath(raw: string): string[] {
+  const tex = safeTex(raw);
   const t = tex.trim();
   if (/^\\begin\{(equation|align|gather|multline|flalign|eqnarray)\*?\}/.test(t)) return [t];
   return ['\\[', t, '\\]'];
@@ -204,7 +215,7 @@ function inlines(list: Inline[]): string {
           return label;
         }
         case 'math':
-          return `$${n.tex.replace(/\s*\n\s*/g, ' ')}$`;
+          return `$${safeTex(n.tex).replace(/\s*\n\s*/g, ' ')}$`;
         case 'break':
           return '\\\\\n';
       }

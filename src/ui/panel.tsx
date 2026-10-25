@@ -64,7 +64,16 @@ export function Panel({ doc, url, adapter, host, onClose }: Props) {
       }
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key !== 'Escape') return;
+      // Escape inside the site's own text box belongs to the site (e.g. to stop a reply).
+      const target = e.composedPath()[0] as Element | undefined;
+      const inPanel = e.composedPath().includes(host);
+      if (
+        !inPanel &&
+        target?.closest?.('input, textarea, [contenteditable=""], [contenteditable="true"], [role="textbox"]')
+      )
+        return;
+      onClose();
     };
     const timer = setInterval(() => setCount(adapter?.count() ?? 0), 2000);
     doc.addEventListener('selectionchange', onSel);

@@ -3,3 +3,4 @@ tests/fixtures
 tests/golden
 package-lock.json
 docs/index.html
+store/demo.html

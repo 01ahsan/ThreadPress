@@ -169,27 +169,8 @@ function run(text: string, s: RunStyle): string {
     s.code ? '<w:rStyle w:val="InlineCode"/>' : '',
     s.link ? '<w:rStyle w:val="Hyperlink"/>' : '',
   ].join('');
-  const parts = text.split('\t').map((t) => `<w:t xml:space="preserve">${xmlEscape(stripInvalid(t))}</w:t>`);
+  const parts = text.split('\t').map((t) => `<w:t xml:space="preserve">${xmlEscape(t)}</w:t>`);
   return `<w:r>${props ? `<w:rPr>${props}</w:rPr>` : ''}${parts.join('<w:tab/>')}</w:r>`;
-}
-
-/** XML 1.0 forbids most control characters. */
-function stripInvalid(s: string): string {
-  // Compared by code point so the bundle never contains these characters literally.
-  let out = '';
-  for (const ch of s) {
-    const c = ch.codePointAt(0) as number;
-    if (
-      c === 9 ||
-      c === 10 ||
-      c === 13 ||
-      (c >= 0x20 && c <= 0xd7ff) ||
-      (c >= 0xe000 && c <= 0xfffd) ||
-      c >= 0x10000
-    )
-      out += ch;
-  }
-  return out;
 }
 
 export function toDocx(conv: Conversation, opts: ExportOptions): Uint8Array {

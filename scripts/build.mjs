@@ -121,7 +121,14 @@ await writeFile('dist/store/chrome-edge.zip', zip(rootEntries));
 const firefoxManifest = {
   ...manifest,
   background: { scripts: ['background.js'] },
-  browser_specific_settings: { gecko: { id: 'threadpress@01ahsan.github.io', strict_min_version: '128.0' } },
+  browser_specific_settings: {
+    gecko: {
+      id: 'threadpress@01ahsan.github.io',
+      strict_min_version: '128.0',
+      // Firefox Add-ons requires new extensions to declare data collection: ThreadPress collects none.
+      data_collection_permissions: { required: ['none'] },
+    },
+  },
 };
 delete firefoxManifest.minimum_chrome_version;
 await writeFile(

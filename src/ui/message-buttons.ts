@@ -12,14 +12,20 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 const COPY = /copy|কপি|复制|複製|コピー|복사|copiar|kopieren|copier|copia|копир|نسخ|kopyala|salin|sao chép/i;
 
 const BUTTON_CSS = `
-:host { display: inline-flex; vertical-align: middle; }
+:host { display: inline-flex; vertical-align: middle; margin-inline: 2px; }
+/* Brand blue blended with the site's text colour, so it reads well on light and dark themes
+   while still standing apart from the site's own grey icons. */
 button {
+  --tp-blue: color-mix(in srgb, #3b6fe0 72%, currentColor);
   display: inline-grid; place-items: center; width: var(--tp-size, 32px); height: var(--tp-size, 32px);
-  border: 0; border-radius: var(--tp-radius, 8px); background: transparent; color: inherit; cursor: pointer; padding: 0; opacity: .85;
+  border: 1px solid color-mix(in srgb, var(--tp-blue) 30%, transparent); border-radius: var(--tp-radius, 8px);
+  background: color-mix(in srgb, var(--tp-blue) 9%, transparent); color: var(--tp-blue);
+  cursor: pointer; padding: 0; transition: background .12s, border-color .12s;
 }
-button:hover { background: color-mix(in srgb, currentColor 12%, transparent); opacity: 1; }
-button:focus-visible { outline: 2px solid #2457c5; outline-offset: 1px; }
-svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+button:hover { background: color-mix(in srgb, var(--tp-blue) 18%, transparent); border-color: color-mix(in srgb, var(--tp-blue) 55%, transparent); }
+button:focus-visible { outline: 2px solid var(--tp-blue); outline-offset: 1px; }
+svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
+@media (prefers-reduced-motion: reduce) { button { transition: none; } }
 `;
 
 const MENU_CSS = `
@@ -56,12 +62,15 @@ export function startMessageButtons(doc: Document, getAdapter: () => Adapter | n
     }, 400);
   };
 
+  // Messages that already have our button (skipped cheaply while an answer streams in).
+  const done = new WeakMap<Element, HTMLElement>();
   const scan = () => {
     const adapter = getAdapter();
     if (!adapter) return;
     const turns = adapter.turns();
     const set = new Set(turns.map((t) => t.el));
     for (const turn of turns) {
+      if (done.get(turn.el)?.isConnected) continue;
       const copy = findCopyButton(turn.el, set);
       if (!copy) continue;
       // Sites often wrap each toolbar button in its own element; insert after that wrapper so
@@ -74,8 +83,14 @@ export function startMessageButtons(doc: Document, getAdapter: () => Adapter | n
         ? Array.from(wrap.parentElement.children).filter(isToolItem).length
         : 0;
       const item = wrap && wrap !== turn.el && wrap.childElementCount === 1 && toolbarSize > 1 ? wrap : copy;
-      if (item.nextElementSibling?.localName === 'threadpress-msg') continue;
-      item.after(makeButton(doc, copy, (anchor) => openMenu(doc, adapter, turn, opts, anchor)));
+      const existing = item.nextElementSibling;
+      if (existing?.localName === 'threadpress-msg') {
+        done.set(turn.el, existing as HTMLElement);
+        continue;
+      }
+      const host = makeButton(doc, copy, (anchor) => openMenu(doc, adapter, turn, opts, anchor));
+      item.after(host);
+      done.set(turn.el, host);
     }
   };
 
@@ -90,8 +105,8 @@ function findCopyButton(turn: Element, turns: Set<Element>): HTMLElement | null 
     COPY.test(b.getAttribute('title') ?? '') ||
     COPY.test(b.getAttribute('data-testid') ?? '') ||
     ((b.textContent ?? '').trim().length < 20 && COPY.test(b.textContent ?? ''));
-  const ownedBy = (b: Element) => {
-    for (let p = b.parentElement; p; p = p.parentElement) if (turns.has(p)) return p;
+  const ownedBy = (b: Element, stop?: Element) => {
+    for (let p = b.parentElement; p && p !== stop; p = p.parentElement) if (turns.has(p)) return p;
     return null;
   };
   // The message's toolbar sits at the bottom, so prefer the last Copy button, and skip the
@@ -106,8 +121,12 @@ function findCopyButton(turn: Element, turns: Set<Element>): HTMLElement | null 
   // Toolbar placed just after the message (DeepSeek, Gemini): look in the next couple of siblings.
   let sib = turn.nextElementSibling;
   for (let i = 0; sib && i < 2; i++, sib = sib.nextElementSibling) {
-    if (turns.has(sib) || Array.from(turns).some((t) => sib?.contains(t))) break;
-    const b = Array.from(sib.querySelectorAll('button, [role="button"]')).find(isCopy);
+    if (turns.has(sib)) break;
+    const holder = sib;
+    // A Copy button inside another message belongs to that message, not this one.
+    const b = Array.from(holder.querySelectorAll('button, [role="button"]')).find(
+      (x) => isCopy(x) && !ownedBy(x, holder),
+    );
     if (b) return b as HTMLElement;
   }
   return null;
@@ -183,9 +202,19 @@ function openMenu(
       paper: /^en-(US|CA)|es-MX/.test(navigator.language) ? 'Letter' : 'A4',
       labels: { user: t('you'), assistant: '', unknown: t('scopeHighlight') },
     };
-    const conv = buildConversation(doc, url, adapter, messages());
-    if (format === 'copy') void navigator.clipboard.writeText(renderExport(conv, 'md', options) as string);
-    else void deliver(doc, conv, format, options);
+    const task = async () => {
+      const conv = buildConversation(doc, url, adapter, messages());
+      if (format === 'copy') {
+        await navigator.clipboard.writeText(renderExport(conv, 'md', options) as string);
+        return t('copied', { n: conv.messages.length });
+      }
+      const name = await deliver(doc, conv, format, options);
+      return format === 'pdf' ? t('printed') : t('saved', { file: name });
+    };
+    task().then(
+      (msg) => toast(doc, msg, false),
+      (err: Error) => toast(doc, t('failed', { error: err.message }), true),
+    );
   };
 
   const item = (badge: string, cls: string, label: string, action: () => void) => {
@@ -255,6 +284,26 @@ function openMenu(
   }
   doc.addEventListener('pointerdown', outside, true);
   doc.addEventListener('keydown', onKey, true);
+}
+
+/** A short message at the bottom of the window, gone after a few seconds. */
+function toast(doc: Document, message: string, error: boolean): void {
+  const host = doc.createElement('threadpress-toast');
+  const shadow = host.attachShadow({ mode: 'open' });
+  adopt(
+    doc,
+    shadow,
+    `:host { all: initial; }
+     div { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 2147483647; max-width: min(520px, calc(100vw - 32px));
+       padding: 10px 16px; border-radius: 10px; background: ${error ? '#b42318' : '#1b1d23'}; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.25);
+       font: 13.5px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Bengali", sans-serif; overflow-wrap: anywhere; }`,
+  );
+  const box = doc.createElement('div');
+  box.setAttribute('role', error ? 'alert' : 'status');
+  box.textContent = message;
+  shadow.append(box);
+  doc.documentElement.append(host);
+  setTimeout(() => host.remove(), error ? 6000 : 3500);
 }
 
 function adopt(doc: Document, shadow: ShadowRoot, css: string): void {

@@ -1,7 +1,11 @@
-# ThreadPress 0.4.1
+# ThreadPress 0.5.0
 
-- Export a single message: an export icon now sits next to each message's own Copy button. Pick PDF, Word, Markdown or Copy, with or without your question.
-- Faster reading of long chats: no message is read twice, scrolling takes bigger steps, and ThreadPress waits only as long as the site takes to load older messages.
-- Short chats no longer wait to confirm there is nothing older.
+- The export icon next to each message now has a light blue tint, so it stands apart from the site's own buttons.
+- A short "Saved" / "Copied" note confirms single-message exports, and errors are shown instead of failing silently.
+- Escape in the chat's text box no longer closes the panel, and text selected while typing is no longer offered for export.
+- Security: equations in LaTeX exports can no longer run file or shell commands when compiled; IDs are masked in the page layout file.
+- Word: invisible control characters can no longer make a file fail to open.
+- Faster while answers are streaming in very long chats.
+- Firefox package declares that it collects no data, as Firefox Add-ons now requires.
 
 Update: download **ThreadPress-extension.zip** below, extract it over your ThreadPress folder, and click the reload arrow on the extensions page.

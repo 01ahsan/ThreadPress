@@ -150,3 +150,14 @@ describe('performance', () => {
     ).rejects.toThrow('cancelled');
   });
 });
+
+describe('LaTeX safety', () => {
+  it('neutralises file and shell access hidden in maths copied from a page', async () => {
+    const { safeTex } = await import('../../src/exporters/latex');
+    const evil = String.raw`x \input{/etc/passwd} \immediate\write18{rm -rf ~} \directlua{os.exit()} \frac{1}{2} \end{aligned}`;
+    const out = safeTex(evil);
+    expect(out).not.toMatch(/\\(input|immediate|write18|directlua)(?![a-zA-Z])/);
+    expect(out).toContain(String.raw`\frac{1}{2}`);
+    expect(out).toContain(String.raw`\end{aligned}`);
+  });
+});
