@@ -1,12 +1,14 @@
 # Store listing (copy and paste)
 
+Listing title (from the manifest): **ThreadPress - AI Chat Exporter**. Minimum versions: Chrome/Edge 111, Firefox 140.
+
 Images: `store/screenshots/*.png` (1280×800), `store/promo-440x280.png`, icon `assets/icons/icon-128.png`.
 Packages (from the latest GitHub release): `chrome-edge.zip` for Chrome and Edge, `firefox.zip` for Firefox.
 Privacy policy URL: https://github.com/01ahsan/ThreadPress/blob/main/PRIVACY.md
 
 ## Name
 
-ThreadPress – AI Chat Exporter
+ThreadPress - AI Chat Exporter
 
 ## Short description (max 132 characters)
 
@@ -56,3 +58,5 @@ Export the AI chat conversation open in the current tab to a file (PDF, Word, Ma
 
 The add-on is bundled and minified with esbuild. Source: https://github.com/01ahsan/ThreadPress (tag matching the version).
 Build: Node.js 22+, then `npm ci && npm run build`. The Firefox package is `dist/store/firefox.zip`.
+
+The linter's one `innerHTML` warning is inside the bundled Preact library (its `dangerouslySetInnerHTML` prop). ThreadPress never uses that prop, and its own code is linted to forbid assigning HTML strings: all page content is built with DOM methods (`createElement`, `textContent`).

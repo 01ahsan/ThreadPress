@@ -59,4 +59,8 @@ When a chat site changes its layout, see [docs/fixing-a-site.md](docs/fixing-a-s
 
 </details>
 
-MIT licence
+## Licence
+
+MIT © 2026 01ahsan. ThreadPress includes [Preact](https://preactjs.com) (MIT); see `THIRD_PARTY_NOTICES.txt` in the download.
+
+ThreadPress is an independent project and is not affiliated with or endorsed by OpenAI, Anthropic, Google, xAI, DeepSeek or Moonshot AI. Product names belong to their owners.

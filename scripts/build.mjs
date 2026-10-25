@@ -69,7 +69,9 @@ const matches = SITES.flatMap((site) =>
 );
 const manifest = {
   manifest_version: 3,
-  name: 'ThreadPress',
+  // The stores show this as the listing title; the toolbar uses short_name.
+  name: 'ThreadPress - AI Chat Exporter',
+  short_name: 'ThreadPress',
   version: pkg.version,
   description:
     'Save AI chats as PDF, Word, Markdown and more, with equations and code intact. Private: nothing leaves your device.',
@@ -89,7 +91,8 @@ const manifest = {
     'toggle-panel': { suggested_key: { default: 'Alt+Shift+E' }, description: 'Open ThreadPress' },
   },
   content_security_policy: { extension_pages: "script-src 'self'; object-src 'self'" },
-  minimum_chrome_version: '109',
+  // color-mix() in the per-message button needs Chrome/Edge 111.
+  minimum_chrome_version: '111',
 };
 await writeFile('dist/extension/manifest.json', JSON.stringify(manifest, null, 2) + '\n');
 await writeFile('dist/extension/content.js', await bundle('src/extension/content.ts'));
@@ -98,12 +101,24 @@ for (const size of [16, 32, 48, 128]) {
   await cp(`assets/icons/icon-${size}.png`, `dist/extension/icons/icon-${size}.png`);
 }
 await cp('LICENSE', 'dist/extension/LICENSE');
+// MIT requires shipping the copyright notice of bundled code with every copy.
+const notices = [
+  'ThreadPress includes the following open-source software.',
+  '',
+  '----------------------------------------------------------------------',
+  `Preact ${JSON.parse(await readFile('node_modules/preact/package.json', 'utf8')).version} - https://preactjs.com`,
+  '----------------------------------------------------------------------',
+  (await readFile('node_modules/preact/LICENSE', 'utf8')).trim(),
+  '',
+].join('\n');
+await writeFile('dist/extension/THIRD_PARTY_NOTICES.txt', notices);
 
 const extFiles = [
   'manifest.json',
   'content.js',
   'background.js',
   'LICENSE',
+  'THIRD_PARTY_NOTICES.txt',
   ...[16, 32, 48, 128].map((s) => `icons/icon-${s}.png`),
 ];
 const entries = await Promise.all(
@@ -124,10 +139,11 @@ const firefoxManifest = {
   browser_specific_settings: {
     gecko: {
       id: 'threadpress@01ahsan.github.io',
-      strict_min_version: '128.0',
+      strict_min_version: '140.0',
       // Firefox Add-ons requires new extensions to declare data collection: ThreadPress collects none.
       data_collection_permissions: { required: ['none'] },
     },
+    gecko_android: { strict_min_version: '142.0' },
   },
 };
 delete firefoxManifest.minimum_chrome_version;

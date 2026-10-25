@@ -1,9 +1,18 @@
 {
   "name": "threadpress",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "private": true,
   "description": "Export AI chat conversations to Markdown, JSON, plain text and more. Runs entirely on your device.",
   "license": "MIT",
+  "author": "01ahsan",
+  "homepage": "https://github.com/01ahsan/ThreadPress",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/01ahsan/ThreadPress.git"
+  },
+  "bugs": {
+    "url": "https://github.com/01ahsan/ThreadPress/issues"
+  },
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",

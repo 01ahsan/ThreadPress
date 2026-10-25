@@ -254,6 +254,18 @@
         font-size: 14px;
         margin-top: 32px;
       }
+      footer .fine {
+        font-size: 12.5px;
+        max-width: 560px;
+        margin: 8px auto 0;
+      }
+      footer details {
+        text-align: left;
+      }
+      footer summary {
+        cursor: pointer;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
@@ -368,8 +380,32 @@
       </section>
 
       <footer>
-        ThreadPress {{VERSION}} · Free and open source (MIT) ·
-        <a href="https://github.com/01ahsan/ThreadPress">GitHub</a>
+        <p>
+          ThreadPress {{VERSION}} · © 2026 01ahsan · Free and open source (MIT) ·
+          <a href="https://github.com/01ahsan/ThreadPress">GitHub</a> ·
+          <a href="https://github.com/01ahsan/ThreadPress/blob/main/PRIVACY.md">Privacy</a>
+        </p>
+        <p class="fine">
+          ThreadPress is an independent project and is not affiliated with or endorsed by OpenAI, Anthropic,
+          Google, xAI, DeepSeek or Moonshot AI. Product names belong to their owners.
+        </p>
+        <details class="fine">
+          <summary>Open-source licences</summary>
+          <p>ThreadPress includes Preact (MIT License), Copyright (c) 2015-present Jason Miller.</p>
+          <p>
+            Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+            associated documentation files (the "Software"), to deal in the Software without restriction,
+            including without limitation the rights to use, copy, modify, merge, publish, distribute,
+            sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+            furnished to do so, subject to the following conditions: The above copyright notice and this
+            permission notice shall be included in all copies or substantial portions of the Software. THE
+            SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+            LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+            NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+            DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
+            OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+          </p>
+        </details>
       </footer>
     </main>
   </body>

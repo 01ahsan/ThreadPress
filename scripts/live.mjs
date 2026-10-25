@@ -17,7 +17,8 @@ import { spawn } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
-const SOURCE = process.env.LIVE_USER_DATA ?? 'D:\\Program Files\\Vivaldi\\User Data';
+// The test browser's profile folder, e.g. LIVE_USER_DATA="D:/Vivaldi/User Data" (no default).
+const SOURCE = process.env.LIVE_USER_DATA;
 export const PROFILE = resolve('.live-profile');
 const EXT = resolve('dist/extension');
 
@@ -43,6 +44,7 @@ export async function openLive(headless = false) {
 
 const command = process.argv[2];
 if (command === 'setup') {
+  if (!SOURCE) throw new Error("Set LIVE_USER_DATA to the test browser's profile folder first.");
   rmSync(PROFILE, { recursive: true, force: true });
   mkdirSync(join(PROFILE, 'Default'), { recursive: true });
   for (const part of COPY) {
