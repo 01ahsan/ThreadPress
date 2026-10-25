@@ -4,7 +4,7 @@
 // the visible part of a long chat in the page (virtualised lists) still export fully.
 
 import { siteById, type SiteId } from '../config/sites';
-import { blocksFromElement, type ConvertOptions } from '../ir/from-dom';
+import { blocksFromElement, blocksFromNodes, type ConvertOptions } from '../ir/from-dom';
 import { inlineText } from '../ir/inline';
 import type { Block, Message, Role } from '../ir/types';
 import { nextFrame, throwIfAborted } from './chunk';
@@ -22,6 +22,10 @@ export interface SiteSpec {
   reasoning?: string[];
   /** UI chrome inside messages to drop: buttons are always dropped; add toolbars, labels, etc. */
   skip?: string;
+  /** Extra test for UI chrome that a selector cannot express (e.g. by its text). */
+  skipIf?: (el: Element) => boolean;
+  /** Custom turn finder for layouts that selectors cannot describe; merged with the selectors. */
+  findTurns?: (doc: Document) => { el: Element; role: Role }[];
   /** User prompts are plain text with line breaks (white-space: pre-wrap). */
   userIsPlainText?: boolean;
   /** Scroll container selectors; falls back to the nearest scrollable ancestor. */
@@ -53,6 +57,7 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
       for (const sel of selectors)
         for (const el of Array.from(doc.querySelectorAll(sel))) tagged.set(el, role);
     }
+    for (const t of spec.findTurns?.(doc) ?? []) tagged.set(t.el, t.role);
     // Keep outermost matches only (checked through ancestors, so long chats stay fast), in document order.
     const all = Array.from(tagged.keys()).filter((el) => {
       for (let p = el.parentElement; p; p = p.parentElement) if (tagged.has(p)) return false;
@@ -68,6 +73,7 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
       ...(spec.codeLanguage ? { codeLanguage: spec.codeLanguage } : {}),
       skip: (e) =>
         (spec.skip ? e.matches(spec.skip) : false) ||
+        (spec.skipIf?.(e) ?? false) ||
         (spec.reasoning ? spec.reasoning.some((r) => e.matches(r)) : false),
     };
     const blocks: Block[] = [];
@@ -76,7 +82,7 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
       if (box) {
         const inner = blocksFromElement(box, {
           ...opts,
-          skip: (e) => (spec.skip ? e.matches(spec.skip) : false),
+          skip: (e) => (spec.skip ? e.matches(spec.skip) : false) || (spec.skipIf?.(e) ?? false),
         });
         if (inner.length) blocks.push({ type: 'reasoning', summary: 'Reasoning', blocks: inner });
       }
@@ -85,6 +91,13 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
     const parts = contentSel ? allMatches(el, contentSel) : [];
     const roots = parts.length ? parts : [el];
     const plain = role === 'user' && spec.userIsPlainText;
+    if (role === 'user' && parts.length) {
+      // Pictures attached to a prompt sit outside the text bubble.
+      const images = Array.from(el.querySelectorAll('img')).filter(
+        (img) => !parts.some((p) => p.contains(img)),
+      );
+      blocks.push(...blocksFromNodes(images, opts));
+    }
     for (const root of roots) blocks.push(...blocksFromElement(root, { ...opts, preserveWhitespace: plain }));
     const model = role === 'assistant' ? spec.model?.(el) : undefined;
     return { role, ...(model ? { model } : {}), blocks };
@@ -215,6 +228,10 @@ async function loadOlder(
   let lastFirst: string | undefined;
   for (let round = 0; round < 5000 && stable < 3; round++) {
     throwIfAborted(signal);
+    // Some sites (ChatGPT) load older messages on wheel input rather than on scroll position.
+    box.dispatchEvent(
+      new WheelEvent('wheel', { deltaY: -2000, deltaMode: 0, bubbles: true, cancelable: true }),
+    );
     box.scrollTop = -box.scrollHeight;
     // Nudge down and back up: some sites only load more on a fresh scroll event at the top.
     if (stable > 0) {

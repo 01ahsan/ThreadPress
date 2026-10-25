@@ -77,6 +77,8 @@ a { color: var(--accent); }
 .row { display: flex; align-items: flex-start; gap: 8px; padding: 6px 2px; cursor: pointer; }
 .row input { margin: 2px 0 0; accent-color: var(--accent); }
 .row small { display: block; color: var(--muted); font-size: 11.5px; }
+.diag { flex-direction: column; gap: 2px; padding-top: 8px; border-top: 1px dashed var(--line); margin-top: 4px; cursor: default; }
+button.link { border: 0; background: none; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; font-weight: 600; text-align: left; }
 .row select { margin-left: auto; border: 1px solid var(--line); border-radius: 8px; padding: 3px 8px; background: var(--bg); }
 
 .actions { display: flex; gap: 8px; }

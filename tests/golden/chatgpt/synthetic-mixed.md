@@ -51,6 +51,8 @@ def energy(m):
 
 ## You
 
+*[Image: Uploaded image]*
+
 Sort \[3, 1, 2\] in JS
 
 ## ChatGPT (gpt-5-thinking)

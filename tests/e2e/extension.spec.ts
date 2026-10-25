@@ -34,6 +34,7 @@ test.afterAll(async () => {
 
 const SITES: [string, string, string, number][] = [
   ['chatgpt', 'synthetic-mixed', CHAT_URL, 4],
+  ['chatgpt', 'layout-2026', 'https://chatgpt.com/c/0f0e0d0c-1111-2222-3333-444455556666', 2],
   ['claude', 'synthetic', 'https://claude.ai/chat/0b6f3c1e-0000-4000-8000-000000000001', 2],
   ['gemini', 'synthetic', 'https://gemini.google.com/app/1a2b3c4d5e6f', 2],
   ['grok', 'synthetic', 'https://grok.com/c/9f8e7d6c-0000-4000-8000-000000000002', 2],
@@ -42,7 +43,7 @@ const SITES: [string, string, string, number][] = [
 ];
 
 for (const [site, fixture, url, count] of SITES) {
-  test(`${site}: toolbar button opens the panel and exports Markdown under a strict CSP`, async () => {
+  test(`${site} (${fixture}): toolbar button opens the panel and exports Markdown under a strict CSP`, async () => {
     const page = await context.newPage();
     const afterLoad: string[] = [];
     let loaded = false;

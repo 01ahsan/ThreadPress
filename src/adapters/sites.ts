@@ -7,18 +7,65 @@ import { stripSuffix, type SiteSpec } from './spec';
 
 const text = (doc: Document, sel: string) => doc.querySelector(sel)?.textContent?.trim() || undefined;
 
+/** ChatGPT's hidden turn headings, e.g. "You said:" / "ChatGPT said:". */
+const TURN_LABEL = /^\s*(you said|chatgpt said|chatgpt)\s*:?\s*$/i;
+
+/**
+ * Current ChatGPT layout: every turn starts with a hidden heading. The heading may carry the
+ * role as data-conversation-role; otherwise its English text gives it away. The turn itself is
+ * the nearest <article>/turn container, or the nearest ancestor with the "group" class.
+ */
+function chatgptTurns(doc: Document): { el: Element; role: 'user' | 'assistant' }[] {
+  const out: { el: Element; role: 'user' | 'assistant' }[] = [];
+  const root = doc.querySelector('.thread-scroll-container') ?? doc.querySelector('main') ?? doc.body;
+  for (const h of Array.from(root.querySelectorAll('h1, h2, h3, h4, h5, h6, [data-conversation-role]'))) {
+    const attr = (h.getAttribute('data-conversation-role') ?? '').toLowerCase();
+    const label = h.textContent ?? '';
+    const role =
+      attr === 'user' || attr === 'assistant'
+        ? attr
+        : TURN_LABEL.test(label)
+          ? /you said/i.test(label)
+            ? 'user'
+            : 'assistant'
+          : null;
+    if (!role) continue;
+    let turn: Element | null = h.closest('article, [data-testid^="conversation-turn"], [data-turn]');
+    for (
+      let p = h.parentElement, depth = 0;
+      !turn && p && p !== root && depth < 12;
+      p = p.parentElement, depth++
+    ) {
+      if (p.classList.contains('group')) turn = p;
+    }
+    if (!turn && h.parentElement && h.parentElement !== root) turn = h.parentElement;
+    if (turn) out.push({ el: turn, role });
+  }
+  return out;
+}
+
 export const SPECS: Record<SiteId, SiteSpec> = {
   chatgpt: {
     site: 'chatgpt',
-    user: ['[data-message-author-role="user"]'],
-    assistant: ['[data-message-author-role="assistant"]'],
-    userContent: ['.whitespace-pre-wrap'],
-    assistantContent: ['.markdown'],
+    // Older layout: role on each message. Current layout (2026): each turn is announced by a
+    // hidden heading ("You said:" / "ChatGPT said:"), found by findTurns below.
+    user: ['[data-message-author-role="user"]', '[data-turn="user"]'],
+    assistant: ['[data-message-author-role="assistant"]', '[data-turn="assistant"]'],
+    findTurns: chatgptTurns,
+    userContent: ['.whitespace-pre-wrap', '[data-message-author-role="user"]'],
+    assistantContent: ['.markdown', '[data-message-author-role="assistant"]'],
     userIsPlainText: true,
-    skip: '[data-testid$="-turn-action-button"]',
+    skip: '[data-testid$="-turn-action-button"], [data-oai-writing-block-surface] > header, [data-oai-writing-block-surface] > button',
+    skipIf: (el) => /^h[1-6]$/.test(el.localName) && TURN_LABEL.test(el.textContent ?? ''),
     scroller: ['.thread-scroll-container', '[data-scroll-root]'],
-    key: (el) => el.getAttribute('data-message-id'),
-    model: (el) => el.getAttribute('data-message-model-slug') ?? undefined,
+    key: (el) =>
+      el.getAttribute('data-message-id') ??
+      el.querySelector('[data-message-id]')?.getAttribute('data-message-id') ??
+      el.getAttribute('data-testid'),
+    model: (el) =>
+      (el.getAttribute('data-message-model-slug') ??
+        el.querySelector('[data-message-model-slug]')?.getAttribute('data-message-model-slug')) ||
+      undefined,
     title: (doc) => stripSuffix(doc.title, 'ChatGPT'),
     // Code blocks show the language as a small label above the code.
     codeLanguage: (pre) => {

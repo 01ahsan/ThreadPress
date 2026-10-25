@@ -1,0 +1,172 @@
+{
+  "version": 1,
+  "title": "Quadratic formula",
+  "site": "chatgpt",
+  "url": "https://chatgpt.com/c/0f0e0d0c-1111-2222-3333-444455556666",
+  "exportedAt": "2026-10-24T12:00:00.000Z",
+  "messages": [
+    {
+      "role": "user",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Solve x² − 5x + 6 = 0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Use "
+            },
+            {
+              "type": "math",
+              "tex": "x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}",
+              "mathml": {
+                "tag": "math",
+                "children": [
+                  {
+                    "tag": "mrow",
+                    "children": [
+                      {
+                        "tag": "mi",
+                        "text": "x"
+                      },
+                      {
+                        "tag": "mo",
+                        "text": "="
+                      },
+                      {
+                        "tag": "mfrac",
+                        "children": [
+                          {
+                            "tag": "mrow",
+                            "children": [
+                              {
+                                "tag": "mo",
+                                "text": "−"
+                              },
+                              {
+                                "tag": "mi",
+                                "text": "b"
+                              },
+                              {
+                                "tag": "mo",
+                                "text": "±"
+                              },
+                              {
+                                "tag": "msqrt",
+                                "children": [
+                                  {
+                                    "tag": "mrow",
+                                    "children": [
+                                      {
+                                        "tag": "msup",
+                                        "children": [
+                                          {
+                                            "tag": "mi",
+                                            "text": "b"
+                                          },
+                                          {
+                                            "tag": "mn",
+                                            "text": "2"
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "tag": "mo",
+                                        "text": "−"
+                                      },
+                                      {
+                                        "tag": "mn",
+                                        "text": "4"
+                                      },
+                                      {
+                                        "tag": "mi",
+                                        "text": "a"
+                                      },
+                                      {
+                                        "tag": "mi",
+                                        "text": "c"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "mrow",
+                            "children": [
+                              {
+                                "tag": "mn",
+                                "text": "2"
+                              },
+                              {
+                                "tag": "mi",
+                                "text": "a"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "type": "text",
+              "text": "."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "So "
+            },
+            {
+              "type": "bold",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "x = 2"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": " or "
+            },
+            {
+              "type": "bold",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "x = 3"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

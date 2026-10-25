@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- Like lazy-top.html, but older messages load only on mouse-wheel input near the top
+     (setting the scroll position alone loads nothing), as reported for ChatGPT in 2026. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Very long chat - ChatGPT</title>
+<style>body{margin:0;font:15px sans-serif} #scroller{height:600px;overflow-y:auto;display:flex;flex-direction:column-reverse} [data-message-author-role]{padding:12px;border-bottom:1px solid #ddd}</style>
+</head>
+<body>
+<main>
+  <div id="scroller"><div id="thread"></div></div>
+</main>
+<script>
+  const TOTAL = 300;
+  let oldest = TOTAL - 20;
+  const thread = document.getElementById('thread');
+  const scroller = document.getElementById('scroller');
+  function msg(i) {
+    const role = i % 2 === 0 ? 'user' : 'assistant';
+    const d = document.createElement('div');
+    d.setAttribute('data-message-author-role', role);
+    d.setAttribute('data-message-id', 'm' + i);
+    const inner = document.createElement('div');
+    inner.className = role === 'user' ? 'whitespace-pre-wrap' : 'markdown';
+    if (role === 'user') inner.textContent = 'Question ' + i;
+    else {
+      const p = document.createElement('p');
+      p.textContent = 'Answer ' + i + ' ' + 'lorem ipsum dolor '.repeat(8);
+      inner.append(p);
+    }
+    d.append(inner);
+    return d;
+  }
+  for (let i = oldest; i < TOTAL; i++) thread.append(msg(i));
+  let loading = false;
+  scroller.addEventListener('wheel', (e) => {
+    if (e.deltaY >= 0) return;
+    const fromTop = scroller.scrollTop + scroller.scrollHeight - scroller.clientHeight;
+    if (fromTop < 100 && !loading && oldest > 0) {
+      loading = true;
+      setTimeout(() => {
+        const from = Math.max(0, oldest - 20);
+        const frag = document.createDocumentFragment();
+        for (let i = from; i < oldest; i++) frag.append(msg(i));
+        thread.prepend(frag);
+        oldest = from;
+        loading = false;
+      }, 400);
+    }
+  });
+</script>
+</body>
+</html>

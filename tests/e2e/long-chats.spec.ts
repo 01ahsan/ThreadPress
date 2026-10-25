@@ -40,3 +40,10 @@ test('reads 400 messages from a virtual list that keeps only visible messages', 
   expect(texts.length).toBe(400);
   texts.forEach((t, i) => expect(t).toBe(`${i % 2 === 0 ? 'Question' : 'Answer'} ${i}`));
 });
+
+test('loads older messages on sites that only respond to the mouse wheel', async ({ page }) => {
+  test.setTimeout(150_000);
+  const texts = await exportJson(page, 'virtual/wheel-top.html', 'https://chatgpt.com/c/wheel-chat');
+  expect(texts.length).toBe(300);
+  texts.forEach((t, i) => expect(t).toBe(`${i % 2 === 0 ? 'Question' : 'Answer'} ${i}`));
+});

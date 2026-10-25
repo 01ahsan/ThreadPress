@@ -39,6 +39,9 @@ const en = {
   highlightHint: 'Exports only the text you highlighted.',
   privacy: 'Works on this device. Nothing is uploaded.',
   launcher: 'Export chat',
+  saveLayout: 'Save page layout for a bug report',
+  saveLayoutHint: 'Contains no chat text. Helps fix a site that exports badly.',
+  layoutSaved: 'Layout saved. Attach the file to a bug report.',
   hideButton: 'Hide until the page reloads',
 } as const;
 
@@ -82,6 +85,9 @@ const bn: Partial<Record<MessageKey, string>> = {
   highlightHint: 'শুধু হাইলাইট করা লেখা এক্সপোর্ট হবে।',
   privacy: 'এই ডিভাইসেই কাজ করে। কিছুই আপলোড হয় না।',
   launcher: 'চ্যাট এক্সপোর্ট',
+  saveLayout: 'সমস্যা জানাতে পাতার লেআউট সংরক্ষণ',
+  saveLayoutHint: 'এতে চ্যাটের কোনো লেখা থাকে না। ভুলভাবে এক্সপোর্ট হওয়া সাইট ঠিক করতে সাহায্য করে।',
+  layoutSaved: 'লেআউট সংরক্ষিত। ফাইলটি সমস্যার রিপোর্টে যুক্ত করুন।',
   hideButton: 'পাতা রিলোড না হওয়া পর্যন্ত লুকান',
 };
 

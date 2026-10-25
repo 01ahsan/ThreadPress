@@ -421,6 +421,10 @@
       "role": "user",
       "blocks": [
         {
+          "type": "image",
+          "alt": "Uploaded image"
+        },
+        {
           "type": "paragraph",
           "inlines": [
             {

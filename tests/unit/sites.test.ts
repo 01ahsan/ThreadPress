@@ -25,6 +25,14 @@ const CASES: Case[] = [
     contains: ['$E = mc^2$', '```python', '| :--- | :---: | ---: |', 'বাংলায়'],
   },
   {
+    site: 'chatgpt',
+    fixture: 'layout-2026',
+    url: 'https://chatgpt.com/c/0f0e0d0c-1111-2222-3333-444455556666',
+    title: 'Quadratic formula',
+    roles: ['user', 'assistant'],
+    contains: ['Solve x² − 5x + 6 = 0', '$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}$', '**x = 2**'],
+  },
+  {
     site: 'claude',
     fixture: 'synthetic',
     url: 'https://claude.ai/chat/0b6f3c1e-0000-4000-8000-000000000001',

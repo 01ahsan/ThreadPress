@@ -5,6 +5,8 @@ import type { Adapter, CollectedMessage, Progress } from '../adapters/types';
 import { buildConversation, collectChat, deliver, selectionMessages, type Collected } from '../export-flow';
 import { FORMATS, renderExport, type FormatId } from '../exporters/index';
 import { DEFAULT_OPTIONS, type ExportOptions } from '../exporters/options';
+import { layoutReport } from '../diagnostics';
+import { downloadFile } from '../exporters/download';
 import { t } from './i18n';
 
 interface Props {
@@ -131,6 +133,12 @@ export function Panel({ doc, url, adapter, host, onClose }: Props) {
       await navigator.clipboard.writeText(renderExport(conv, 'md', options()) as string);
       return t('copied', { n: conv.messages.length });
     });
+
+  const saveLayout = () => {
+    const day = new Date().toISOString().slice(0, 10);
+    downloadFile(doc, `threadpress-layout-${url.hostname}-${day}.txt`, layoutReport(doc, url), 'text/plain');
+    setStatus({ kind: 'done', message: t('layoutSaved') });
+  };
 
   const openPicker = () => {
     setScope('pick');
@@ -342,6 +350,12 @@ export function Panel({ doc, url, adapter, host, onClose }: Props) {
             <option value="Letter">Letter</option>
           </select>
         </label>
+        <div class="row diag">
+          <button type="button" class="link" onClick={saveLayout}>
+            {t('saveLayout')}
+          </button>
+          <small>{t('saveLayoutHint')}</small>
+        </div>
       </details>
 
       <div class="actions">
@@ -386,6 +400,10 @@ export function Panel({ doc, url, adapter, host, onClose }: Props) {
           <a href={brokenSiteIssueUrl(url, adapter.site.label)} target="_blank" rel="noopener noreferrer">
             {t('report')}
           </a>
+          {' · '}
+          <button type="button" class="link" onClick={saveLayout}>
+            {t('saveLayout')}
+          </button>
         </p>
       )}
 
