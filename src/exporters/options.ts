@@ -7,21 +7,25 @@ export interface ExportOptions {
   /** 'placeholder' (default) keeps image addresses out of the file; image links can carry access tokens. */
   images: ImageMode;
   includeModel: boolean;
+  paper: 'A4' | 'Letter';
   labels: { user: string; assistant: string; unknown: string };
 }
 
 export const DEFAULT_OPTIONS: ExportOptions = {
   images: 'placeholder',
   includeModel: true,
-  labels: { user: 'You', assistant: 'Assistant', unknown: 'Selection' },
+  paper: 'A4',
+  /** An empty assistant label means "use the site's name" (ChatGPT, Claude, …). */
+  labels: { user: 'You', assistant: '', unknown: 'Selection' },
 };
 
 export function siteLabel(site: SiteId | 'unknown'): string {
   return SITES.find((s) => s.id === site)?.label ?? 'Web page';
 }
 
-export function messageLabel(m: Message, opts: ExportOptions): string {
-  const base = opts.labels[m.role];
+export function messageLabel(m: Message, opts: ExportOptions, site: SiteId | 'unknown'): string {
+  const base =
+    opts.labels[m.role] || (m.role === 'assistant' && site !== 'unknown' ? siteLabel(site) : 'Assistant');
   return opts.includeModel && m.model ? `${base} (${m.model})` : base;
 }
 

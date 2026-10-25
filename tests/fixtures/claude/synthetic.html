@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- SYNTHETIC fixture mirroring claude.ai's transcript markup (2026-10 redesign). -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Integrals and a table - Claude</title></head>
+<body>
+<nav><a href="/chat/other">Another private chat</a><div>Jane Example</div></nav>
+<main>
+<div data-testid="chat-column-body">
+  <div data-testid="transcript-row">
+    <div data-testid="user-message"><p class="whitespace-pre-wrap">What is ∫ x² dx? Answer in বাংলা too.</p></div>
+  </div>
+  <div data-testid="transcript-row">
+    <div data-testid="assistant-message" data-cds="AssistantMessage" data-is-streaming="false" data-turn-key="t1-hub-reply">
+      <h2 class="sr-only">Claude responded: integrals</h2>
+      <div class="standard-markdown">
+        <p>The antiderivative is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><msup><mi>x</mi><mn>3</mn></msup><mn>3</mn></mfrac><mo>+</mo><mi>C</mi></mrow><annotation encoding="application/x-tex">\frac{x^3}{3} + C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true">x33+C</span></span>.</p>
+        <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup><msup><mi>x</mi><mn>2</mn></msup><mtext> </mtext><mi>d</mi><mi>x</mi><mo>=</mo><mfrac><mn>1</mn><mn>3</mn></mfrac></mrow><annotation encoding="application/x-tex">\int_0^1 x^2\,dx = \frac{1}{3}</annotation></semantics></math></span></span></span>
+        <p>বাংলায়: সমাকলন হলো অন্তরকলনের বিপরীত।</p>
+        <pre class="code-block__code"><code class="language-python">import sympy as sp
+x = sp.symbols("x")
+print(sp.integrate(x**2, x))</code></pre>
+        <table><thead><tr><th>f(x)</th><th style="text-align:right">∫ f dx</th></tr></thead>
+          <tbody><tr><td>x</td><td style="text-align:right">x²/2</td></tr></tbody></table>
+      </div>
+      <div data-testid="message-actions"><button>Copy</button><time>Oct 25</time></div>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

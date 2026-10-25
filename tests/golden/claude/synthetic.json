@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "title": "Integrals and a table",
+  "site": "claude",
+  "url": "https://claude.ai/chat/0b6f3c1e-0000-4000-8000-000000000001",
+  "exportedAt": "2026-10-24T12:00:00.000Z",
+  "messages": [
+    {
+      "role": "user",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "What is ∫ x² dx? Answer in বাংলা too."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "The antiderivative is "
+            },
+            {
+              "type": "math",
+              "tex": "\\frac{x^3}{3} + C",
+              "mathml": {
+                "tag": "math",
+                "children": [
+                  {
+                    "tag": "mrow",
+                    "children": [
+                      {
+                        "tag": "mfrac",
+                        "children": [
+                          {
+                            "tag": "msup",
+                            "children": [
+                              {
+                                "tag": "mi",
+                                "text": "x"
+                              },
+                              {
+                                "tag": "mn",
+                                "text": "3"
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "mn",
+                            "text": "3"
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "mo",
+                        "text": "+"
+                      },
+                      {
+                        "tag": "mi",
+                        "text": "C"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "type": "text",
+              "text": "."
+            }
+          ]
+        },
+        {
+          "type": "math",
+          "tex": "\\int_0^1 x^2\\,dx = \\frac{1}{3}",
+          "mathml": {
+            "tag": "math",
+            "attrs": {
+              "display": "block"
+            },
+            "children": [
+              {
+                "tag": "mrow",
+                "children": [
+                  {
+                    "tag": "msubsup",
+                    "children": [
+                      {
+                        "tag": "mo",
+                        "text": "∫"
+                      },
+                      {
+                        "tag": "mn",
+                        "text": "0"
+                      },
+                      {
+                        "tag": "mn",
+                        "text": "1"
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "msup",
+                    "children": [
+                      {
+                        "tag": "mi",
+                        "text": "x"
+                      },
+                      {
+                        "tag": "mn",
+                        "text": "2"
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "mtext",
+                    "text": " "
+                  },
+                  {
+                    "tag": "mi",
+                    "text": "d"
+                  },
+                  {
+                    "tag": "mi",
+                    "text": "x"
+                  },
+                  {
+                    "tag": "mo",
+                    "text": "="
+                  },
+                  {
+                    "tag": "mfrac",
+                    "children": [
+                      {
+                        "tag": "mn",
+                        "text": "1"
+                      },
+                      {
+                        "tag": "mn",
+                        "text": "3"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "বাংলায়: সমাকলন হলো অন্তরকলনের বিপরীত।"
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "text": "import sympy as sp\nx = sp.symbols(\"x\")\nprint(sp.integrate(x**2, x))"
+        },
+        {
+          "type": "table",
+          "align": [
+            null,
+            "right"
+          ],
+          "header": [
+            [
+              {
+                "type": "text",
+                "text": "f(x)"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "∫ f dx"
+              }
+            ]
+          ],
+          "rows": [
+            [
+              [
+                {
+                  "type": "text",
+                  "text": "x"
+                }
+              ],
+              [
+                {
+                  "type": "text",
+                  "text": "x²/2"
+                }
+              ]
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

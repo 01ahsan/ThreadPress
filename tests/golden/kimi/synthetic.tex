@@ -1,0 +1,56 @@
+% 翻译与表格
+% Exported from Kimi by ThreadPress on 2026-10-24.
+% Compile with LuaLaTeX (needs the Noto fonts listed below).
+\documentclass[11pt,a4paper]{article}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+\else
+  \usepackage{fontspec}
+\fi
+\usepackage[english, provide*=*]{babel}
+\babelprovide[import, onchar=ids fonts]{arabic}
+\babelfont[arabic]{rm}{Noto Naskh Arabic}
+\babelprovide[import, onchar=ids fonts]{chinese}
+\babelfont[chinese]{rm}{Noto Serif CJK SC}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage[normalem]{ulem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\lstset{basicstyle=\ttfamily\small, breaklines=true, columns=fullflexible, keepspaces=true,
+  frame=single, rulecolor=\color{black!15}, backgroundcolor=\color{black!3}, upquote=true}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+\title{翻译与表格}
+\date{Kimi \textperiodcentered{} 2026-10-24}
+\begin{document}
+\maketitle
+
+\section*{You}
+
+把 "hello" 翻译成中文和阿拉伯语
+
+
+\section*{Kimi}
+
+\begin{center}\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{|l|l|}
+\hline
+\textbf{语言} & \textbf{翻译} \\
+\hline
+中文 & 你好 \\
+العربية & مرحبا \\
+\hline
+\end{tabular}}
+\end{center}
+
+Done ✅
+
+
+\end{document}

@@ -5,12 +5,21 @@ import type { SiteId } from '../config/sites';
 
 export const IR_VERSION = 1;
 
+/** A MathML element copied from the page through an allowlist (see ir/math.ts). */
+export interface MathNode {
+  tag: string;
+  attrs?: Record<string, string>;
+  /** Text content of token elements (mi, mn, mo, mtext, ms, mspace). */
+  text?: string;
+  children?: MathNode[];
+}
+
 export type Inline =
   | { type: 'text'; text: string }
   | { type: 'bold' | 'italic' | 'strike'; children: Inline[] }
   | { type: 'code'; text: string }
   | { type: 'link'; href: string; children: Inline[] }
-  | { type: 'math'; tex: string }
+  | { type: 'math'; tex: string; mathml?: MathNode }
   | { type: 'break' };
 
 export type Align = 'left' | 'center' | 'right' | null;
@@ -26,7 +35,7 @@ export type Block =
   | { type: 'heading'; level: 1 | 2 | 3 | 4 | 5 | 6; inlines: Inline[] }
   | { type: 'list'; ordered: boolean; start?: number; items: ListItem[] }
   | { type: 'code'; language?: string; text: string }
-  | { type: 'math'; tex: string }
+  | { type: 'math'; tex: string; mathml?: MathNode }
   | { type: 'table'; align: Align[]; header: Inline[][]; rows: Inline[][][] }
   | { type: 'image'; src?: string; alt: string; data?: string }
   | { type: 'blockquote'; blocks: Block[] }

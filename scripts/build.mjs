@@ -41,10 +41,17 @@ async function bundle(entry) {
     jsx: 'automatic',
     jsxImportSource: 'preact',
     legalComments: 'none',
-    charset: 'utf8',
+    // ASCII output: Chrome refuses content scripts containing Unicode non-characters such as U+FFFF.
+    charset: 'ascii',
     write: false,
   });
   const code = result.outputFiles[0].text;
+  // Chrome refuses to load an extension whose scripts contain Unicode non-characters.
+  const nonchar = [...code].find((ch) => {
+    const c = ch.codePointAt(0);
+    return (c >= 0xfdd0 && c <= 0xfdef) || (c & 0xfffe) === 0xfffe;
+  });
+  if (nonchar) throw new Error(`Unicode non-character U+${nonchar.codePointAt(0).toString(16)} in ${entry}`);
   const hits = FORBIDDEN.filter((re) => re.test(code));
   if (hits.length) throw new Error(`Forbidden API in ${entry}: ${hits.map(String).join(', ')}`);
   return code;
@@ -65,7 +72,7 @@ const manifest = {
   name: 'ThreadPress',
   version: pkg.version,
   description:
-    'Save your AI chats as Markdown, JSON or plain text. Free and private: nothing leaves your device.',
+    'Save AI chats as PDF, Word, Markdown and more, with equations and code intact. Private: nothing leaves your device.',
   icons: {
     16: 'icons/icon-16.png',
     32: 'icons/icon-32.png',
@@ -106,6 +113,27 @@ const entries = await Promise.all(
   })),
 );
 await writeFile('dist/ThreadPress-extension.zip', zip(entries));
+
+// Store uploads need manifest.json at the zip root.
+const rootEntries = entries.map((e) => ({ ...e, name: e.name.replace(/^ThreadPress\//, '') }));
+await mkdir('dist/store', { recursive: true });
+await writeFile('dist/store/chrome-edge.zip', zip(rootEntries));
+const firefoxManifest = {
+  ...manifest,
+  background: { scripts: ['background.js'] },
+  browser_specific_settings: { gecko: { id: 'threadpress@01ahsan.github.io', strict_min_version: '128.0' } },
+};
+delete firefoxManifest.minimum_chrome_version;
+await writeFile(
+  'dist/store/firefox.zip',
+  zip(
+    rootEntries.map((e) =>
+      e.name === 'manifest.json'
+        ? { ...e, data: Buffer.from(JSON.stringify(firefoxManifest, null, 2) + '\n') }
+        : e,
+    ),
+  ),
+);
 
 // ---- Bookmarklet ----
 const code = await bundle('src/bookmarklet/main.ts');

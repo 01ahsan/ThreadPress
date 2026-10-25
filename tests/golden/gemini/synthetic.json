@@ -1,0 +1,253 @@
+{
+  "version": 1,
+  "title": "Matrix question",
+  "site": "gemini",
+  "url": "https://gemini.google.com/app/1a2b3c4d5e6f",
+  "exportedAt": "2026-10-24T12:00:00.000Z",
+  "messages": [
+    {
+      "role": "user",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Invert a 2×2 matrix"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {
+          "type": "reasoning",
+          "summary": "Reasoning",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "Use the adjugate formula."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "For "
+            },
+            {
+              "type": "math",
+              "tex": "A=\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}",
+              "mathml": {
+                "tag": "math",
+                "children": [
+                  {
+                    "tag": "mrow",
+                    "children": [
+                      {
+                        "tag": "mi",
+                        "text": "A"
+                      },
+                      {
+                        "tag": "mo",
+                        "text": "="
+                      },
+                      {
+                        "tag": "mrow",
+                        "children": [
+                          {
+                            "tag": "mo",
+                            "attrs": {
+                              "fence": "true"
+                            },
+                            "text": "("
+                          },
+                          {
+                            "tag": "mtable",
+                            "children": [
+                              {
+                                "tag": "mtr",
+                                "children": [
+                                  {
+                                    "tag": "mtd",
+                                    "children": [
+                                      {
+                                        "tag": "mi",
+                                        "text": "a"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "tag": "mtd",
+                                    "children": [
+                                      {
+                                        "tag": "mi",
+                                        "text": "b"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "mtr",
+                                "children": [
+                                  {
+                                    "tag": "mtd",
+                                    "children": [
+                                      {
+                                        "tag": "mi",
+                                        "text": "c"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "tag": "mtd",
+                                    "children": [
+                                      {
+                                        "tag": "mi",
+                                        "text": "d"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "mo",
+                            "attrs": {
+                              "fence": "true"
+                            },
+                            "text": ")"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "type": "text",
+              "text": ":"
+            }
+          ]
+        },
+        {
+          "type": "math",
+          "tex": "A^{-1}=\\frac{1}{ad-bc}\\begin{pmatrix}d&-b\\\\-c&a\\end{pmatrix}",
+          "mathml": {
+            "tag": "math",
+            "attrs": {
+              "display": "block"
+            },
+            "children": [
+              {
+                "tag": "mrow",
+                "children": [
+                  {
+                    "tag": "msup",
+                    "children": [
+                      {
+                        "tag": "mi",
+                        "text": "A"
+                      },
+                      {
+                        "tag": "mrow",
+                        "children": [
+                          {
+                            "tag": "mo",
+                            "text": "−"
+                          },
+                          {
+                            "tag": "mn",
+                            "text": "1"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "mo",
+                    "text": "="
+                  },
+                  {
+                    "tag": "mfrac",
+                    "children": [
+                      {
+                        "tag": "mn",
+                        "text": "1"
+                      },
+                      {
+                        "tag": "mrow",
+                        "children": [
+                          {
+                            "tag": "mi",
+                            "text": "a"
+                          },
+                          {
+                            "tag": "mi",
+                            "text": "d"
+                          },
+                          {
+                            "tag": "mo",
+                            "text": "−"
+                          },
+                          {
+                            "tag": "mi",
+                            "text": "b"
+                          },
+                          {
+                            "tag": "mi",
+                            "text": "c"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "blocks": [
+                {
+                  "type": "paragraph",
+                  "inlines": [
+                    {
+                      "type": "text",
+                      "text": "Requires "
+                    },
+                    {
+                      "type": "bold",
+                      "children": [
+                        {
+                          "type": "text",
+                          "text": "ad − bc ≠ 0"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

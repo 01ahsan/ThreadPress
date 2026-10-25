@@ -1,0 +1,22 @@
+Matrix question
+Gemini · https://gemini.google.com/app/1a2b3c4d5e6f
+Exported 2026-10-24T12:00:00.000Z
+
+
+You
+===
+
+Invert a 2×2 matrix
+
+
+Gemini
+======
+
+[Reasoning]
+  Use the adjugate formula.
+
+For $A=\begin{pmatrix}a&b\\c&d\end{pmatrix}$:
+
+    A^{-1}=\frac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}
+
+- Requires ad − bc ≠ 0

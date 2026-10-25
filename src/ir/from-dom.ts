@@ -1,9 +1,9 @@
 // Converts rendered chat markup into IR blocks. Shared by every site adapter;
 // adapters customise it through ConvertOptions rather than forking it.
 
-import { extractTex, isDisplayMath, isMathRoot } from './math';
+import { extractMathML, extractTex, isDisplayMath, isMathRoot } from './math';
 import { normalizeInlines } from './inline';
-import type { Align, Block, Inline, ListItem } from './types';
+import type { Align, Block, Inline, ListItem, MathNode } from './types';
 
 export interface ConvertOptions {
   /** Base for resolving relative links and image sources. */
@@ -108,8 +108,8 @@ class Converter {
       if (isMathRoot(el)) {
         if (isDisplayMath(el)) {
           flush();
-          out.push({ type: 'math', tex: extractTex(el) });
-        } else pending.push({ type: 'math', tex: extractTex(el) });
+          out.push({ type: 'math', ...math(el) });
+        } else pending.push({ type: 'math', ...math(el) });
         continue;
       }
       if (INLINE_TAGS.has(el.localName) && !this.containsBlock(el)) {
@@ -251,8 +251,10 @@ class Converter {
   private inline(el: Element): Flow[] {
     if (this.skipped(el)) return [];
     if (isMathRoot(el)) {
-      const tex = extractTex(el);
-      return isDisplayMath(el) ? [{ type: 'hoist', block: { type: 'math', tex } }] : [{ type: 'math', tex }];
+      const m = math(el);
+      return isDisplayMath(el)
+        ? [{ type: 'hoist', block: { type: 'math', ...m } }]
+        : [{ type: 'math', ...m }];
     }
     switch (el.localName) {
       case 'br':
@@ -313,6 +315,11 @@ class Converter {
       ) !== null
     );
   }
+}
+
+function math(el: Element): { tex: string; mathml?: MathNode } {
+  const mathml = extractMathML(el);
+  return { tex: extractTex(el), ...(mathml ? { mathml } : {}) };
 }
 
 function wrap(type: 'bold' | 'italic' | 'strike', flow: Flow[]): Flow[] {
@@ -377,7 +384,7 @@ function flattenBlock(b: Block): Inline[] {
     case 'footnote':
       return b.inlines;
     case 'math':
-      return [{ type: 'math', tex: b.tex }];
+      return [{ type: 'math', tex: b.tex, ...(b.mathml ? { mathml: b.mathml } : {}) }];
     case 'code':
       return [{ type: 'code', text: b.text }];
     case 'image':

@@ -15,7 +15,8 @@ export function toMarkdown(conv: Conversation, opts: ExportOptions): string {
     '',
     `# ${escapeText(conv.title)}`,
   );
-  for (const m of conv.messages) out.push('', messageHeading(m, opts), '', ...renderBlocks(m.blocks, opts));
+  for (const m of conv.messages)
+    out.push('', messageHeading(m, opts, conv.site), '', ...renderBlocks(m.blocks, opts));
   return (
     out
       .join('\n')
@@ -24,8 +25,8 @@ export function toMarkdown(conv: Conversation, opts: ExportOptions): string {
   );
 }
 
-function messageHeading(m: Message, opts: ExportOptions): string {
-  return `## ${escapeText(messageLabel(m, opts))}`;
+function messageHeading(m: Message, opts: ExportOptions, site: Conversation['site']): string {
+  return `## ${escapeText(messageLabel(m, opts, site))}`;
 }
 
 function renderBlocks(blocks: Block[], opts: ExportOptions): string[] {

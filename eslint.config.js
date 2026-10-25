@@ -24,12 +24,13 @@ export default tseslint.config(
       'no-restricted-syntax': [
         'error',
         {
-          selector: "MemberExpression[property.name='innerHTML']",
+          selector: 'AssignmentExpression > MemberExpression.left[property.name=/^(innerHTML|outerHTML)$/]',
           message: 'Build DOM nodes; never assign HTML strings.',
         },
         {
-          selector: "MemberExpression[property.name='outerHTML']",
-          message: 'Build DOM nodes; never assign HTML strings.',
+          selector:
+            'CallExpression[callee.property.name=/^(insertAdjacentHTML|parseFromString|write|writeln)$/]',
+          message: 'Never parse or write HTML strings.',
         },
         { selector: "Identifier[name='localStorage']", message: 'Do not touch site storage.' },
         { selector: "Identifier[name='sessionStorage']", message: 'Do not touch site storage.' },

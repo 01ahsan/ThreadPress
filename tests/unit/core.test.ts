@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createChatGPTAdapter } from '../../src/adapters/chatgpt';
+import { adapterForSite } from '../../src/adapters/registry';
 import { brokenSiteIssueUrl } from '../../src/adapters/registry';
 import { exportFileName } from '../../src/exporters/filename';
 import { renderExport } from '../../src/exporters/index';
@@ -124,18 +124,19 @@ describe('performance', () => {
       `<main>${Array.from({ length: 250 }, (_, i) => turn(i)).join('')}</main>`,
       'text/html',
     );
-    const adapter = createChatGPTAdapter({ doc, url: new URL(base) });
+    const adapter = adapterForSite('chatgpt', { doc, url: new URL(base) });
     const start = performance.now();
-    const messages = await adapter.getMessages(new AbortController().signal);
+    const messages = (await adapter.collect(new AbortController().signal, () => {})).map((m) => m.message);
     const conv: Conversation = {
       version: IR_VERSION,
       title: 't',
       site: 'chatgpt',
       url: base,
-      exportedAt: '',
+      exportedAt: '2026-01-01T00:00:00.000Z',
       messages,
     };
-    for (const f of ['md', 'json', 'txt'] as const) renderExport(conv, f, DEFAULT_OPTIONS);
+    for (const f of ['docx', 'md', 'json', 'txt', 'tex', 'html'] as const)
+      renderExport(conv, f, DEFAULT_OPTIONS);
     expect(messages.length).toBe(500);
     expect(performance.now() - start).toBeLessThan(10_000);
   });
@@ -144,8 +145,8 @@ describe('performance', () => {
     const doc = new DOMParser().parseFromString('<div data-message-author-role="user">x</div>', 'text/html');
     const ctrl = new AbortController();
     ctrl.abort();
-    await expect(createChatGPTAdapter({ doc, url: new URL(base) }).getMessages(ctrl.signal)).rejects.toThrow(
-      'cancelled',
-    );
+    await expect(
+      adapterForSite('chatgpt', { doc, url: new URL(base) }).collect(ctrl.signal, () => {}),
+    ).rejects.toThrow('cancelled');
   });
 });

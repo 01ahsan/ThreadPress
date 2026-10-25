@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "title": "Prime check",
+  "site": "deepseek",
+  "url": "https://chat.deepseek.com/a/chat/s/0000-1111",
+  "exportedAt": "2026-10-24T12:00:00.000Z",
+  "messages": [
+    {
+      "role": "user",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Is 97 prime?"
+            },
+            {
+              "type": "break"
+            },
+            {
+              "type": "text",
+              "text": "Explain briefly."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {
+          "type": "reasoning",
+          "summary": "Reasoning",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "Check divisors up to √97 ≈ 9.8."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "bold",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Yes."
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": " 97 has no divisor "
+            },
+            {
+              "type": "math",
+              "tex": "d \\le \\sqrt{97}",
+              "mathml": {
+                "tag": "math",
+                "children": [
+                  {
+                    "tag": "mrow",
+                    "children": [
+                      {
+                        "tag": "mi",
+                        "text": "d"
+                      },
+                      {
+                        "tag": "mo",
+                        "text": "≤"
+                      },
+                      {
+                        "tag": "msqrt",
+                        "children": [
+                          {
+                            "tag": "mn",
+                            "text": "97"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "type": "text",
+              "text": " other than 1."
+            }
+          ]
+        },
+        {
+          "type": "blockquote",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "A prime has exactly two divisors."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

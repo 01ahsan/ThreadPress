@@ -7,7 +7,7 @@ import { messageLabel, siteLabel, type ExportOptions } from './options';
 export function toText(conv: Conversation, opts: ExportOptions): string {
   const out: string[] = [conv.title, `${siteLabel(conv.site)} · ${conv.url}`, `Exported ${conv.exportedAt}`];
   for (const m of conv.messages) {
-    const label = messageLabel(m, opts);
+    const label = messageLabel(m, opts, conv.site);
     out.push('', '', label, '='.repeat(Math.max(3, Array.from(label).length)), '', ...blocks(m.blocks, opts));
   }
   return (

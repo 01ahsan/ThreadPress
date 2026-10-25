@@ -1,0 +1,67 @@
+% Integrals and a table
+% Exported from Claude by ThreadPress on 2026-10-24.
+% Compile with LuaLaTeX (needs the Noto fonts listed below).
+\documentclass[11pt,a4paper]{article}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+\else
+  \usepackage{fontspec}
+\fi
+\usepackage[english, provide*=*]{babel}
+\babelprovide[import, onchar=ids fonts]{bengali}
+\babelfont[bengali]{rm}{Noto Serif Bengali}
+\babelprovide[import, onchar=ids fonts]{hindi}
+\babelfont[hindi]{rm}{Noto Serif Devanagari}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage[normalem]{ulem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\lstset{basicstyle=\ttfamily\small, breaklines=true, columns=fullflexible, keepspaces=true,
+  frame=single, rulecolor=\color{black!15}, backgroundcolor=\color{black!3}, upquote=true}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+\title{Integrals and a table}
+\date{Claude \textperiodcentered{} 2026-10-24}
+\begin{document}
+\maketitle
+
+\section*{You}
+
+What is ∫ x² dx? Answer in বাংলা too.
+
+
+\section*{Claude}
+
+The antiderivative is $\frac{x^3}{3} + C$.
+
+\[
+\int_0^1 x^2\,dx = \frac{1}{3}
+\]
+
+বাংলায়: সমাকলন হলো অন্তরকলনের বিপরীত।
+
+\begin{lstlisting}[language=python]
+import sympy as sp
+x = sp.symbols("x")
+print(sp.integrate(x**2, x))
+\end{lstlisting}
+
+\begin{center}\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{|l|r|}
+\hline
+\textbf{f(x)} & \textbf{∫ f dx} \\
+\hline
+x & x²/2 \\
+\hline
+\end{tabular}}
+\end{center}
+
+
+\end{document}

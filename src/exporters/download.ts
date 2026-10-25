@@ -1,6 +1,7 @@
 /** Saves a file through a temporary link. No permissions, no network. */
-export function downloadText(doc: Document, name: string, text: string, mime: string): void {
-  const blob = new Blob([text], { type: `${mime};charset=utf-8` });
+export function downloadFile(doc: Document, name: string, data: string | Uint8Array, mime: string): void {
+  const type = typeof data === 'string' ? `${mime};charset=utf-8` : mime;
+  const blob = new Blob([data as BlobPart], { type });
   const url = URL.createObjectURL(blob);
   const a = doc.createElement('a');
   a.href = url;

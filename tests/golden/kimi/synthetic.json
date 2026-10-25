@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "title": "翻译与表格",
+  "site": "kimi",
+  "url": "https://www.kimi.com/chat/d0e1f2a3b4",
+  "exportedAt": "2026-10-24T12:00:00.000Z",
+  "messages": [
+    {
+      "role": "user",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "把 \"hello\" 翻译成中文和阿拉伯语"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {
+          "type": "table",
+          "align": [
+            null,
+            null
+          ],
+          "header": [
+            [
+              {
+                "type": "text",
+                "text": "语言"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "翻译"
+              }
+            ]
+          ],
+          "rows": [
+            [
+              [
+                {
+                  "type": "text",
+                  "text": "中文"
+                }
+              ],
+              [
+                {
+                  "type": "text",
+                  "text": "你好"
+                }
+              ]
+            ],
+            [
+              [
+                {
+                  "type": "text",
+                  "text": "العربية"
+                }
+              ],
+              [
+                {
+                  "type": "text",
+                  "text": "مرحبا"
+                }
+              ]
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Done ✅"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

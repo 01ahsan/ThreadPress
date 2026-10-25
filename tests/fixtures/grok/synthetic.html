@@ -1,0 +1,32 @@
+<!doctype html>
+<!-- SYNTHETIC fixture mirroring grok.com's Tailwind markup (2026). -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Fibonacci in Rust - Grok</title></head>
+<body>
+<main>
+<div class="flex flex-col">
+  <div id="response-u1" class="flex flex-col">
+    <div class="relative group flex flex-col justify-center items-end">
+      <div class="message-bubble"><p class="whitespace-pre-wrap">Write fibonacci in Rust</p></div>
+    </div>
+  </div>
+  <div id="response-a1" class="flex flex-col">
+    <div class="relative group flex flex-col justify-center items-start">
+      <div class="message-bubble">
+        <div class="response-content-markdown">
+          <p>Here is an <em>iterative</em> version:</p>
+          <pre><code class="language-rust">fn fib(n: u64) -&gt; u64 {
+    let (mut a, mut b) = (0, 1);
+    for _ in 0..n { (a, b) = (b, a + b); }
+    a
+}</code></pre>
+          <ol start="3"><li>Third point</li><li>Fourth point</li></ol>
+        </div>
+      </div>
+      <div class="action-buttons"><button>Regenerate</button></div>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

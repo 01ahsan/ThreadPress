@@ -2,9 +2,9 @@
 
 Save your AI chats as files. Free, private, no sign-up.
 
-**Works on:** ChatGPT. Claude, Gemini, Grok, DeepSeek and Kimi are coming soon.
+**Works on:** ChatGPT, Claude, Gemini, Grok, DeepSeek and Kimi.
 
-**Saves as:** Markdown, JSON or plain text. PDF and Word are coming soon.
+**Saves as:** PDF, Word, Markdown, HTML, LaTeX, plain text or JSON. Equations, code, tables and every language stay intact.
 
 ## Install on Chrome, Edge or Brave
 
@@ -21,11 +21,13 @@ Open the [install page](docs/index.html), click **Download raw file**, open the 
 
 ## Use
 
-1. Open a chat.
-2. Click **ThreadPress** (the toolbar icon, or the bookmark in Firefox).
-3. Choose a format and click **Export whole chat**.
+1. Open a chat and click **ThreadPress**.
+2. Choose **Whole chat**, or **Choose messages** to tick the ones you want.
+3. Pick a format and click **Export**.
 
-Want only part of a chat? Highlight it first.
+For a PDF, choose **Save as PDF** in the print window that opens.
+
+Want only a few lines? Highlight them first, then click ThreadPress.
 
 ## Your privacy
 

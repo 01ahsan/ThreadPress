@@ -1,0 +1,113 @@
+% Physics notes and a sorting question
+% Exported from ChatGPT by ThreadPress on 2026-10-24.
+% Compile with LuaLaTeX (needs the Noto fonts listed below).
+\documentclass[11pt,a4paper]{article}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+\else
+  \usepackage{fontspec}
+\fi
+\usepackage[english, provide*=*]{babel}
+\babelprovide[import, onchar=ids fonts]{bengali}
+\babelfont[bengali]{rm}{Noto Serif Bengali}
+\babelprovide[import, onchar=ids fonts]{hindi}
+\babelfont[hindi]{rm}{Noto Serif Devanagari}
+\babelprovide[import, onchar=ids fonts]{arabic}
+\babelfont[arabic]{rm}{Noto Naskh Arabic}
+\babelprovide[import, onchar=ids fonts]{chinese}
+\babelfont[chinese]{rm}{Noto Serif CJK SC}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage[normalem]{ulem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\lstset{basicstyle=\ttfamily\small, breaklines=true, columns=fullflexible, keepspaces=true,
+  frame=single, rulecolor=\color{black!15}, backgroundcolor=\color{black!3}, upquote=true}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+\title{Physics notes and a sorting question}
+\date{ChatGPT \textperiodcentered{} 2026-10-24}
+\begin{document}
+\maketitle
+
+\section*{You}
+
+Explain E = mc\textasciicircum{}2 briefly.\\
+Also: what does *this* mean?
+
+বাংলায় একটি বাক্য লিখুন।
+
+
+\section*{ChatGPT (gpt-5)}
+
+\subsection*{Mass–energy equivalence}
+
+The formula $E = mc^2$ says \textbf{mass} and \emph{energy} are \sout{different} interchangeable. See \href{https://en.wikipedia.org/wiki/Mass\%E2\%80\%93energy_equivalence}{Wikipedia} or call \texttt{energy(m)}. It costs \$5\_000.
+
+\[
+\begin{aligned} a &= \frac{1}{2} \\ b &= \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} \end{aligned}
+\]
+
+\subsubsection*{Steps}
+
+\begin{enumerate}
+  \item Measure mass.
+  \item Multiply by $c^2$:
+    
+    \begin{itemize}
+      \item nested \textbf{bold} item
+      \item second nested
+    \end{itemize}
+\end{enumerate}
+
+\begin{lstlisting}[language=python]
+def energy(m):
+    return m * 299_792_458 ** 2  # uses ``` fences
+\end{lstlisting}
+
+\begin{center}\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{|l|c|r|}
+\hline
+\textbf{Quantity} & \textbf{Symbol} & \textbf{Value} \\
+\hline
+Speed of light & $c$ & 299 792 458 m/s \\
+Pipe \textbar{} char & \texttt{a\textbar{}b} & 1 \\
+\hline
+\end{tabular}}
+\end{center}
+
+\begin{quote}
+Energy cannot be created or destroyed.
+
+\end{quote}
+
+\noindent\rule{\linewidth}{0.4pt}
+
+\fbox{Image: Diagram of energy}
+
+উত্তর: শক্তি ও ভর সমতুল্য। 中文测试。 العربية
+
+
+\section*{You}
+
+Sort [3, 1, 2] in JS
+
+
+\section*{ChatGPT (gpt-5-thinking)}
+
+Use \texttt{Array.prototype.toSorted}:
+
+\begin{lstlisting}
+const sorted = [3, 1, 2].toSorted((a, b) => a - b);
+\end{lstlisting}
+
+1. This line starts like a list but is not one.
+
+
+\end{document}

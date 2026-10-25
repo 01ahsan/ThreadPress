@@ -1,6 +1,8 @@
 // Recovers the original LaTeX from rendered maths (KaTeX, MathJax, raw MathML).
 // Order: TeX annotation -> data attributes -> MathML (as linear text) -> plain text.
 
+import type { MathNode } from './types';
+
 const TEX_ATTRS = ['data-tex', 'data-latex', 'data-math', 'data-formula', 'data-original'];
 
 /** Returns true for an element that is the root of a rendered formula. */
@@ -10,6 +12,9 @@ export function isMathRoot(el: Element): boolean {
   const tag = el.localName;
   if (tag === 'mjx-container' || tag === 'math') return true;
   if (cls.contains('MathJax') || cls.contains('MathJax_Display')) return true;
+  // Gemini: <span class="math-inline" data-math="…"> / <div class="math-block" data-math="…">
+  if ((cls.contains('math-inline') || cls.contains('math-block')) && el.hasAttribute('data-math'))
+    return true;
   if (tag === 'script' && /^math\/tex/.test(el.getAttribute('type') ?? '')) return true;
   return (
     TEX_ATTRS.some((a) => el.hasAttribute(a)) && el.querySelector('.katex, math, mjx-container') !== null
@@ -17,7 +22,9 @@ export function isMathRoot(el: Element): boolean {
 }
 
 export function isDisplayMath(el: Element): boolean {
-  if (el.classList.contains('katex-display') || el.classList.contains('MathJax_Display')) return true;
+  const cls = el.classList;
+  if (cls.contains('katex-display') || cls.contains('MathJax_Display') || cls.contains('math-block'))
+    return true;
   if (el.closest('.katex-display')) return true;
   if (el.localName === 'mjx-container') return el.getAttribute('display') === 'true';
   if (el.localName === 'math') return el.getAttribute('display') === 'block';
@@ -89,4 +96,109 @@ function mathmlToText(node: Element): string {
     default:
       return kids.length ? kids.map(mathmlToText).join('') : (node.textContent ?? '');
   }
+}
+
+const TOKEN_TAGS = new Set(['mi', 'mn', 'mo', 'mtext', 'ms', 'mspace']);
+const MATH_TAGS = new Set([
+  'math',
+  'mrow',
+  'mi',
+  'mn',
+  'mo',
+  'mtext',
+  'ms',
+  'mspace',
+  'mfrac',
+  'msqrt',
+  'mroot',
+  'msup',
+  'msub',
+  'msubsup',
+  'munder',
+  'mover',
+  'munderover',
+  'mtable',
+  'mtr',
+  'mtd',
+  'mstyle',
+  'mpadded',
+  'mphantom',
+  'menclose',
+  'mfenced',
+  'mmultiscripts',
+  'mprescripts',
+  'none',
+  'semantics',
+  'merror',
+  'mlabeledtr',
+]);
+const MATH_ATTRS = new Set([
+  'display',
+  'mathvariant',
+  'stretchy',
+  'fence',
+  'separator',
+  'lspace',
+  'rspace',
+  'accent',
+  'accentunder',
+  'columnalign',
+  'rowalign',
+  'rowspacing',
+  'columnspacing',
+  'displaystyle',
+  'scriptlevel',
+  'linethickness',
+  'mathsize',
+  'width',
+  'height',
+  'depth',
+  'notation',
+  'open',
+  'close',
+  'separators',
+  'minsize',
+  'maxsize',
+  'movablelimits',
+  'largeop',
+  'symmetric',
+  'form',
+  'columnlines',
+  'rowlines',
+  'frame',
+  'align',
+]);
+
+/**
+ * Copies the page's MathML (KaTeX and MathJax both emit it) through an allowlist of
+ * MathML elements and attributes. Used for native equations in PDF, HTML and Word.
+ */
+export function extractMathML(el: Element): MathNode | undefined {
+  const math = el.localName === 'math' ? el : el.querySelector('math');
+  if (!math) return undefined;
+  const node = copy(math);
+  if (node && isDisplayMath(el)) node.attrs = { ...node.attrs, display: 'block' };
+  return node;
+}
+
+function copy(el: Element): MathNode | undefined {
+  const tag = el.localName;
+  if (tag === 'semantics') {
+    const first = el.firstElementChild;
+    return first ? copy(first) : undefined;
+  }
+  if (!MATH_TAGS.has(tag)) return undefined;
+  const node: MathNode = { tag };
+  for (const { name, value } of Array.from(el.attributes)) {
+    if (MATH_ATTRS.has(name)) (node.attrs ??= {})[name] = value;
+  }
+  if (TOKEN_TAGS.has(tag)) {
+    node.text = (el.textContent ?? '').replace(/\u00a0/g, ' ');
+    return node;
+  }
+  const children = Array.from(el.children)
+    .map(copy)
+    .filter((c): c is MathNode => c !== undefined);
+  if (children.length) node.children = children;
+  return node;
 }

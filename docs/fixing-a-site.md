@@ -39,6 +39,6 @@ The script removes scripts, sidebars, account menus, email addresses, and the pr
 
 ## 4. Update the site's code
 
-1. Update `src/adapters/<site>.ts` (and `src/config/sites.ts` if the site's address changed) so every message, maths formula, code block, table and image is read correctly.
+1. Update that site's entry in `src/adapters/sites.ts` (and `src/config/sites.ts` if the site's address changed) so every message, maths formula, code block, table and image is read correctly.
 2. Run `UPDATE_GOLDEN=1 npm test` to refresh the expected outputs in `tests/golden/<site>/`, and read them to check they look right.
 3. Run `npm run check` and `npm run test:e2e`. Both must pass.

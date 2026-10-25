@@ -14,7 +14,7 @@ Also: what does \*this\* mean?
 
 বাংলায় একটি বাক্য লিখুন।
 
-## Assistant (gpt-5)
+## ChatGPT (gpt-5)
 
 #### Mass–energy equivalence
 
@@ -51,11 +51,9 @@ def energy(m):
 
 ## You
 
-*[Image: Uploaded image]*
-
 Sort \[3, 1, 2\] in JS
 
-## Assistant (gpt-5-thinking)
+## ChatGPT (gpt-5-thinking)
 
 Use `Array.prototype.toSorted`:
 

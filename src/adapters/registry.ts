@@ -1,16 +1,16 @@
 import { siteForUrl, ISSUES_URL, type SiteId } from '../config/sites';
 import { VERSION } from '../version';
-import { createChatGPTAdapter } from './chatgpt';
+import { SPECS } from './sites';
+import { createSpecAdapter } from './spec';
 import type { Adapter, AdapterContext } from './types';
-
-const FACTORIES: Partial<Record<SiteId, (ctx: AdapterContext) => Adapter>> = {
-  chatgpt: createChatGPTAdapter,
-};
 
 export function adapterFor(ctx: AdapterContext): Adapter | null {
   const site = siteForUrl(ctx.url);
-  const factory = site && FACTORIES[site.id];
-  return factory ? factory(ctx) : null;
+  return site ? createSpecAdapter(SPECS[site.id], ctx) : null;
+}
+
+export function adapterForSite(id: SiteId, ctx: AdapterContext): Adapter {
+  return createSpecAdapter(SPECS[id], ctx);
 }
 
 /**

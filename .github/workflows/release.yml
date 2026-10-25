@@ -18,4 +18,4 @@ jobs:
       - name: Publish the extension zip
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/ThreadPress-extension.zip --title "ThreadPress $GITHUB_REF_NAME" --notes-file CHANGELOG.md
+        run: gh release create "$GITHUB_REF_NAME" dist/ThreadPress-extension.zip dist/store/chrome-edge.zip dist/store/firefox.zip --title "ThreadPress $GITHUB_REF_NAME" --notes-file CHANGELOG.md

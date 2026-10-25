@@ -58,7 +58,42 @@
             },
             {
               "type": "math",
-              "tex": "E = mc^2"
+              "tex": "E = mc^2",
+              "mathml": {
+                "tag": "math",
+                "children": [
+                  {
+                    "tag": "mrow",
+                    "children": [
+                      {
+                        "tag": "mi",
+                        "text": "E"
+                      },
+                      {
+                        "tag": "mo",
+                        "text": "="
+                      },
+                      {
+                        "tag": "mi",
+                        "text": "m"
+                      },
+                      {
+                        "tag": "msup",
+                        "children": [
+                          {
+                            "tag": "mi",
+                            "text": "c"
+                          },
+                          {
+                            "tag": "mn",
+                            "text": "2"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
             },
             {
               "type": "text",
@@ -129,7 +164,24 @@
         },
         {
           "type": "math",
-          "tex": "\\begin{aligned} a &= \\frac{1}{2} \\\\ b &= \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} \\end{aligned}"
+          "tex": "\\begin{aligned} a &= \\frac{1}{2} \\\\ b &= \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} \\end{aligned}",
+          "mathml": {
+            "tag": "math",
+            "attrs": {
+              "display": "block"
+            },
+            "children": [
+              {
+                "tag": "mrow",
+                "children": [
+                  {
+                    "tag": "mi",
+                    "text": "A"
+                  }
+                ]
+              }
+            ]
+          }
         },
         {
           "type": "heading",
@@ -169,7 +221,30 @@
                     },
                     {
                       "type": "math",
-                      "tex": "c^2"
+                      "tex": "c^2",
+                      "mathml": {
+                        "tag": "math",
+                        "children": [
+                          {
+                            "tag": "mrow",
+                            "children": [
+                              {
+                                "tag": "msup",
+                                "children": [
+                                  {
+                                    "tag": "mi",
+                                    "text": "c"
+                                  },
+                                  {
+                                    "tag": "mn",
+                                    "text": "2"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
                     },
                     {
                       "type": "text",
@@ -269,7 +344,16 @@
               [
                 {
                   "type": "math",
-                  "tex": "c"
+                  "tex": "c",
+                  "mathml": {
+                    "tag": "math",
+                    "children": [
+                      {
+                        "tag": "mi",
+                        "text": "c"
+                      }
+                    ]
+                  }
                 }
               ],
               [
@@ -336,10 +420,6 @@
     {
       "role": "user",
       "blocks": [
-        {
-          "type": "image",
-          "alt": "Uploaded image"
-        },
         {
           "type": "paragraph",
           "inlines": [
