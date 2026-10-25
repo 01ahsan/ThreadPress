@@ -160,7 +160,7 @@ export interface ScaleResult {
 }
 
 /** Large and deeply nested inputs, timed. Budgets are generous for slow CI machines. */
-export function runScale(): ScaleResult[] {
+export function runScale(only?: string): ScaleResult[] {
   const results: ScaleResult[] = [];
   document.documentElement.style.overflow = 'hidden';
   const url = new URL('https://chatgpt.com/c/scale');
@@ -172,6 +172,7 @@ export function runScale(): ScaleResult[] {
     html: string,
     check: (texts: Map<FormatId, string>, count: number) => string | null,
   ) => {
+    if (only && name !== only) return;
     const t0 = performance.now();
     try {
       const parsed = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
@@ -248,8 +249,10 @@ export function runScale(): ScaleResult[] {
   );
 
   // 5. Deep nesting (no stack overflow, text kept).
-  const deepDivs = `${'<div>'.repeat(300)}<p>DEEPDIV</p>${'</div>'.repeat(300)}`;
-  run('300 nested containers', 10000, `<main>${turn('assistant', deepDivs, 0)}</main>`, (t) =>
+  // 150 levels, far deeper than any chat page: laying out about 300 crashes Chromium itself (a real
+  // page that deep would crash before ThreadPress runs). The converter is tested 300 deep in core.test.ts.
+  const deepDivs = `${'<div>'.repeat(150)}<p>DEEPDIV</p>${'</div>'.repeat(150)}`;
+  run('150 nested containers', 10000, `<main>${turn('assistant', deepDivs, 0)}</main>`, (t) =>
     t.get('txt')!.includes('DEEPDIV') ? null : 'text lost',
   );
   const deepList = `${'<ul><li>level'.repeat(60)}DEEPLIST${'</li></ul>'.repeat(60)}`;
@@ -260,9 +263,11 @@ export function runScale(): ScaleResult[] {
   run('100 nested quotes', 10000, `<main>${turn('assistant', deepQuote, 0)}</main>`, (t) =>
     t.get('html')!.includes('DEEPQUOTE') ? null : 'text lost',
   );
-  const deepMath = `<span class="katex"><span class="katex-mathml"><math><semantics>${'<mrow><msup><mi>x</mi>'.repeat(200)}<mn>9</mn>${'</msup></mrow>'.repeat(200)}<annotation encoding="application/x-tex">x</annotation></semantics></math></span></span>`;
+  // 60 levels, far beyond real chats: laying out much deeper MathML crashes Chromium's own maths
+  // renderer. The converter's own limit is tested 200 deep in tests/unit/docx.test.ts.
+  const deepMath = `<span class="katex"><span class="katex-mathml"><math><semantics>${'<mrow><msup><mi>x</mi>'.repeat(60)}<mn>9</mn>${'</msup></mrow>'.repeat(60)}<annotation encoding="application/x-tex">x</annotation></semantics></math></span></span>`;
   run(
-    'equation nested 200 deep',
+    'equation nested 60 deep',
     10000,
     `<main>${turn('assistant', `<p>${deepMath} DEEPMATH</p>`, 0)}</main>`,
     (t) => (t.get('txt')!.includes('DEEPMATH') ? null : 'text lost'),

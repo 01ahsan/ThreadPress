@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 // Engine-independent suites (fuzz, stress, long chats) also run in Firefox and WebKit.
-const CROSS_ENGINE = /(fuzz|stress|scale|long-chats)\.spec\.ts$/;
+const CROSS_ENGINE = /(fuzz|stress|scale|long-chats|layouts)\.spec\.ts$/;
 
 export default defineConfig({
   testDir: 'tests/e2e',

@@ -1,0 +1,17 @@
+Fourier law
+DeepSeek · https://chat.deepseek.com/a/chat/s/0a1b2c3d-0000-4000-8000-000000000004
+Exported 2026-10-24T12:00:00.000Z
+
+
+You
+===
+
+law of fourier
+
+
+DeepSeek
+========
+
+Heat flux is proportional to the gradient $q = -k\nabla T$ .4 <https://example.org/heat>
+
+- Material property: conductivity k.

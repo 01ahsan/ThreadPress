@@ -1,0 +1,75 @@
+<!doctype html>
+<!-- SYNTHETIC fixture copying grok.com's structure as measured on 2026-10-26 (test account): a
+     virtual list whose rows ([data-plane-row]) are positioned by coordinates. The rows are
+     deliberately stored OUT OF ORDER in the code; reading order is the order on screen.
+     Text is invented. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Population question - Grok</title>
+<style>
+  body { margin: 0; font: 15px sans-serif; }
+  [data-testid="chat-transcript-scroller"] { height: 700px; overflow-y: auto; }
+  .plane { position: relative; height: 600px; }
+  [data-plane-row] { position: absolute; left: 0; right: 0; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+<main>
+<div class="relative h-full">
+  <div class="h-full overflow-y-auto" role="region" aria-label="Conversation" data-testid="chat-transcript-scroller" data-transcript-renderer="plane">
+    <div class="plane">
+      <!-- Second on screen (top 120): the first answer. -->
+      <div data-plane-row="gateway:a1" style="top:120px">
+        <div class="relative group flex flex-col justify-center" id="response-a1">
+          <div class="message-bubble relative rounded-3xl" role="article" data-testid="assistant-message">
+            <h2 class="sr-only" data-no-copy="true">Grok</h2>
+            <div class="thinking-container mb-1"><div><button data-testid="canvas-trigger"><span>Thought for 4s</span></button></div></div>
+            <div class="relative"><div class="relative response-content-markdown markdown chat-md">
+              <div class="streamdown-chat-md"><div>
+                <p class="break-words">FIRST ANSWER about <strong>8.3 billion</strong> people.<a class="no-copy" data-citation="true" href="https://example.org/pop">&#x2060;Example</a></p>
+              </div></div>
+            </div></div>
+            <div class="flex gap-2"><button aria-label="48 sources"><span>48 sources</span></button></div>
+          </div>
+          <div class="action-buttons" role="group"><div><span><button aria-label="Copy response">c</button><button aria-label="Like">l</button></span></div></div>
+        </div>
+      </div>
+      <!-- Fourth on screen (top 420): the second answer. -->
+      <div data-plane-row="gateway:a2" style="top:420px">
+        <div class="relative group flex flex-col justify-center" id="response-a2">
+          <div class="message-bubble relative rounded-3xl" role="article" data-testid="assistant-message">
+            <h2 class="sr-only" data-no-copy="true">Grok</h2>
+            <div class="relative"><div class="relative response-content-markdown markdown chat-md">
+              <p class="break-words">SECOND ANSWER: still growing.</p>
+            </div></div>
+          </div>
+          <div class="action-buttons" role="group"><div><span><button aria-label="Copy response">c</button></span></div></div>
+        </div>
+      </div>
+      <!-- First on screen (top 0): the first question. -->
+      <div data-plane-row="gateway:q1" style="top:0px">
+        <div class="relative group flex flex-col justify-center" id="response-q1">
+          <div class="message-bubble relative" role="article" data-testid="user-message">
+            <h2 class="sr-only" data-no-copy="true">You</h2>
+            <div class="relative"><div class="relative response-content-markdown markdown chat-md"><p class="break-words">FIRST QUESTION: world population?</p></div></div>
+          </div>
+          <div class="action-buttons" role="group"><div><button aria-label="Edit">e</button><button aria-label="Copy">c</button></div></div>
+        </div>
+      </div>
+      <!-- Third on screen (top 320): the second question. -->
+      <div data-plane-row="gateway:q2" style="top:320px">
+        <div class="relative group flex flex-col justify-center" id="response-q2">
+          <div class="message-bubble relative" role="article" data-testid="user-message">
+            <h2 class="sr-only" data-no-copy="true">You</h2>
+            <div class="relative"><div class="relative response-content-markdown markdown chat-md"><p class="break-words">SECOND QUESTION: is it declining?</p></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

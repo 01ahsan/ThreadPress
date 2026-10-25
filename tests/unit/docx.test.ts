@@ -138,3 +138,18 @@ describe('HTML export', () => {
     expect(html).not.toMatch(/<script|<link|@import|https?:\/\/[^"]*\.(js|css)/);
   });
 });
+
+describe('deeply nested equations', () => {
+  it('converts an equation nested 200 levels deep to Word without overflowing', () => {
+    let node: import('../../src/ir/types').MathNode = { tag: 'mn', text: '9' };
+    for (let i = 0; i < 200; i++)
+      node = { tag: 'mrow', children: [{ tag: 'msup', children: [{ tag: 'mi', text: 'x' }, node] }] };
+    const xml = toOmml({ tag: 'math', children: [node] }, true);
+    expect(xml.match(/<m:sSup>/g)?.length).toBe(200);
+    expect(
+      new DOMParser()
+        .parseFromString(`<r xmlns:m="m">${xml}</r>`, 'application/xml')
+        .getElementsByTagName('parsererror').length,
+    ).toBe(0);
+  });
+});

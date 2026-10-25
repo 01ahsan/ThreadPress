@@ -284,7 +284,11 @@ class Converter {
         return wrap('strike', this.inlineChildren(el));
       case 'a': {
         const href = safeUrl(el.getAttribute('href') ?? '', this.opts.baseUrl, false);
-        const children = this.inlineChildren(el);
+        // Numbered citation markers (DeepSeek: a visually hidden "-" plus the number) carry the
+        // clean number in aria-label; use it as the link text.
+        const label = el.getAttribute('aria-label') ?? '';
+        const citation = /^\d{1,3}$/.test(label) && el.querySelector('[class*="cite"]') !== null;
+        const children: Flow[] = citation ? [{ type: 'text', text: label }] : this.inlineChildren(el);
         if (!href) return children;
         return wrapLink(href, children);
       }
@@ -303,7 +307,9 @@ class Converter {
     const s = raw
       .replace(/\r\n?/g, '\n')
       .replace(/\u00a0/g, ' ')
-      .replace(/\u200b/g, '');
+      // Zero-width space, word joiner and BOM carry no meaning in exports (Grok puts word joiners in
+      // source links). ZWJ/ZWNJ (U+200C/D) stay: Bengali, Arabic and emoji need them.
+      .replace(/[\u200b\u2060\ufeff]/g, '');
     if (this.opts.preserveWhitespace) {
       const parts = s.split('\n');
       return parts.flatMap((p, i) =>

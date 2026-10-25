@@ -131,19 +131,27 @@ export const SPECS: Record<SiteId, SiteSpec> = {
 
   grok: {
     site: 'grok',
+    // 2026 (checked on grok.com, 2026-10-26): a virtual list of rows ([data-plane-row]); each row's
+    // [id^="response-"] container holds the message (data-testid user-message / assistant-message)
+    // and, after it, the message's toolbar. The container is the unit, so the toolbar is included.
     user: [
+      '[id^="response-"]:has([data-testid="user-message"])',
       '[id^="response-"]:has(> .items-end) .message-bubble',
       '.items-end .message-bubble',
       '.relative.group.flex.flex-col.justify-center.items-end',
     ],
     assistant: [
+      '[id^="response-"]:has([data-testid="assistant-message"])',
       '[id^="response-"]:has(> .items-start) .message-bubble',
       '.items-start .message-bubble',
       '.relative.group.flex.flex-col.justify-center.items-start',
     ],
-    userContent: ['.whitespace-pre-wrap'],
+    userContent: ['.response-content-markdown', '.whitespace-pre-wrap'],
     assistantContent: ['.response-content-markdown', '.markdown'],
     reasoning: ['.thinking-container'],
+    // Screen-reader headings ("You", "Grok") and parts the site leaves out when copying.
+    skip: '[data-no-copy="true"], .action-buttons',
+    scroller: ['[data-testid="chat-transcript-scroller"]'],
     virtualised: true,
     key: (el) => el.closest('[id^="response-"]')?.id ?? null,
     title: (doc) => stripSuffix(doc.title, 'Grok'),
@@ -152,8 +160,18 @@ export const SPECS: Record<SiteId, SiteSpec> = {
 
   deepseek: {
     site: 'deepseek',
-    user: ['.ds-message:not(:has(.ds-markdown))', '._9663006 .fbb737a4'],
-    assistant: ['.ds-message:has(.ds-markdown)', '._43c05b5'],
+    // 2026 (checked on chat.deepseek.com, 2026-10-26): each message is a virtual-list row
+    // ([data-virtual-list-item-key]) holding the .ds-message and, after it, an icon-only toolbar.
+    user: [
+      '[data-virtual-list-item-key]:has(.ds-message):not(:has(.ds-markdown))',
+      '.ds-message:not(:has(.ds-markdown))',
+      '._9663006 .fbb737a4',
+    ],
+    assistant: [
+      '[data-virtual-list-item-key]:has(.ds-markdown)',
+      '.ds-message:has(.ds-markdown)',
+      '._43c05b5',
+    ],
     userContent: ['.ds-collapsible-text', '.fbb737a4'],
     assistantContent: [
       '.ds-assistant-message-main-content',
@@ -167,6 +185,16 @@ export const SPECS: Record<SiteId, SiteSpec> = {
       el.closest('[data-virtual-list-item-key]')?.getAttribute('data-virtual-list-item-key') ?? null,
     title: (doc) => stripSuffix(doc.title, 'DeepSeek'),
     isConversationPage: (url) => /\/(a\/)?(chat|share)\//.test(url.pathname),
+    // Toolbar buttons are icons with no labels; the first one is Copy.
+    skip: '.ds-button, [role="button"]',
+    toolbarAnchor: (turn) => {
+      const row = turn.closest('[data-virtual-list-item-key]') ?? turn;
+      return (
+        Array.from(row.querySelectorAll('.ds-button[role="button"], [role="button"]')).find(
+          (b) => !b.closest('.ds-message, .ds-markdown, pre, code'),
+        ) ?? null
+      );
+    },
   },
 
   kimi: {

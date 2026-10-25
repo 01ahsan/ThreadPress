@@ -216,3 +216,29 @@ test('ChatGPT (Oct 2026 layout): export icon after each Copy button, answer icon
   expect(text).not.toContain('Six.');
   await page.close();
 });
+
+test('DeepSeek (Oct 2026): icon-only toolbars get the export icon right after Copy', async () => {
+  const page = await context.newPage();
+  const url = 'https://chat.deepseek.com/a/chat/s/0a1b2c3d-0000-4000-8000-000000000004';
+  await page.route('**/*', (route) =>
+    route.request().url() === url
+      ? route.fulfill({
+          contentType: 'text/html; charset=utf-8',
+          body: readFileSync('tests/fixtures/deepseek/layout-2026-10.html', 'utf8'),
+        })
+      : route.abort(),
+  );
+  await page.goto(url);
+  // One icon per message, each directly after the first toolbar button (Copy).
+  await expect(page.locator('threadpress-msg')).toHaveCount(2);
+  await expect(page.locator('.ds-flex > .ds-button:first-child + threadpress-msg')).toHaveCount(2);
+  await page.locator('threadpress-msg').last().getByRole('button').click();
+  const dl = page.waitForEvent('download');
+  await page.locator('threadpress-menu').getByRole('menuitem', { name: 'Markdown', exact: true }).click();
+  const text = readFileSync(await (await dl).path(), 'utf8');
+  expect(text).toContain('## You\n\nlaw of fourier');
+  expect(text).toContain(String.raw`$q = -k\nabla T$`);
+  expect(text).toContain('[4](https://example.org/heat)');
+  expect(text).not.toContain('[-4]');
+  await page.close();
+});

@@ -16,6 +16,7 @@ import { chromium } from '@playwright/test';
 import { spawn } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 // The test browser's profile folder, e.g. LIVE_USER_DATA="D:/Vivaldi/User Data" (no default).
 const SOURCE = process.env.LIVE_USER_DATA;
@@ -42,7 +43,8 @@ export async function openLive(headless = false) {
   });
 }
 
-const command = process.argv[2];
+// Run the command line only when this file is executed, not when another script imports it.
+const command = import.meta.url === pathToFileURL(process.argv[1] ?? '').href ? process.argv[2] : undefined;
 if (command === 'setup') {
   if (!SOURCE) throw new Error("Set LIVE_USER_DATA to the test browser's profile folder first.");
   rmSync(PROFILE, { recursive: true, force: true });
@@ -65,6 +67,9 @@ if (command === 'setup') {
       'https://gemini.google.com/app',
       'https://chatgpt.com/',
       'https://claude.ai/',
+      'https://grok.com/',
+      'https://chat.deepseek.com/',
+      'https://www.kimi.com/',
     ],
     { stdio: 'ignore' },
   );

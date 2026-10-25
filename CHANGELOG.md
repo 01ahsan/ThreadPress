@@ -2,6 +2,16 @@
 
 All notable changes to ThreadPress. Versions follow [semantic versioning](https://semver.org).
 
+## 1.0.2 (2026-10-26)
+
+Fixes found by testing on the real Grok and DeepSeek sites:
+
+- DeepSeek: the export icon now appears next to every message (DeepSeek's toolbar buttons have no labels).
+- DeepSeek: source citations export as clean numbers (they showed as "-4").
+- Grok: messages export in the right order (Grok's new layout stores them out of order).
+- Grok: screen-reader labels and invisible characters in source links are left out.
+- All sites: messages are read in the order they appear on screen, and hidden leftover rows are ignored.
+
 ## 1.0.1 (2026-10-25)
 
 - The floating button's hide (×) is now always clickable; on some systems the button's corner covered it.

@@ -84,6 +84,14 @@ const CASES: Case[] = [
     contains: ['Is 97 prime?\\\nExplain briefly.', '$d \\le \\sqrt{97}$', '> A prime', '√97 ≈ 9.8'],
   },
   {
+    site: 'deepseek',
+    fixture: 'layout-2026-10',
+    url: 'https://chat.deepseek.com/a/chat/s/0a1b2c3d-0000-4000-8000-000000000004',
+    title: 'Fourier law',
+    roles: ['user', 'assistant'],
+    contains: ['law of fourier', '**Material property**', '[4](https://example.org/heat)'],
+  },
+  {
     site: 'kimi',
     fixture: 'synthetic',
     url: 'https://www.kimi.com/chat/d0e1f2a3b4',

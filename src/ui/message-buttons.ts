@@ -71,7 +71,8 @@ export function startMessageButtons(doc: Document, getAdapter: () => Adapter | n
     const set = new Set(turns.map((t) => t.el));
     for (const [i, turn] of turns.entries()) {
       if (done.get(turn.el)?.isConnected) continue;
-      const copy = findCopyButton(turn.el, set, turns[i + 1]?.el ?? null);
+      const copy = (findCopyButton(turn.el, set, turns[i + 1]?.el ?? null) ??
+        adapter.toolbarAnchor(turn.el)) as HTMLElement | null;
       if (!copy) continue;
       // Sites often wrap each toolbar button in its own element; insert after that wrapper so
       // the icon lines up with the others, but only when it really is one item of a toolbar.

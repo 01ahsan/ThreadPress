@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "title": "Fourier law",
+  "site": "deepseek",
+  "url": "https://chat.deepseek.com/a/chat/s/0a1b2c3d-0000-4000-8000-000000000004",
+  "exportedAt": "2026-10-24T12:00:00.000Z",
+  "messages": [
+    {
+      "role": "user",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "law of fourier"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Heat flux is proportional to the gradient "
+            },
+            {
+              "type": "math",
+              "tex": "q = -k\\nabla T",
+              "mathml": {
+                "tag": "math",
+                "children": [
+                  {
+                    "tag": "mrow",
+                    "children": [
+                      {
+                        "tag": "mi",
+                        "text": "q"
+                      },
+                      {
+                        "tag": "mo",
+                        "text": "="
+                      },
+                      {
+                        "tag": "mo",
+                        "text": "−"
+                      },
+                      {
+                        "tag": "mi",
+                        "text": "k"
+                      },
+                      {
+                        "tag": "mi",
+                        "attrs": {
+                          "mathvariant": "normal"
+                        },
+                        "text": "∇"
+                      },
+                      {
+                        "tag": "mi",
+                        "text": "T"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "type": "text",
+              "text": " ."
+            },
+            {
+              "type": "link",
+              "href": "https://example.org/heat",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "blocks": [
+                {
+                  "type": "paragraph",
+                  "inlines": [
+                    {
+                      "type": "bold",
+                      "children": [
+                        {
+                          "type": "text",
+                          "text": "Material property"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "text": ": conductivity k."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

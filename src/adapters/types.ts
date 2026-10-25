@@ -23,6 +23,8 @@ export interface Adapter {
   count(): number;
   /** Message elements currently in the page, in order, with their roles. */
   turns(): { el: Element; role: Role }[];
+  /** Site-specific toolbar button to place the export icon after, when no labelled Copy exists. */
+  toolbarAnchor(turn: Element): Element | null;
   /** Converts one message element to IR. */
   read(turn: { el: Element; role: Role }): Message;
   /** Loads the full history and converts every message to IR, in order. */

@@ -13,6 +13,9 @@ const SITES = {
   chatgpt: { home: 'https://chatgpt.com/', links: 'nav a[href*="/c/"], a[href*="/c/"]' },
   claude: { home: 'https://claude.ai/recents', links: 'a[href*="/chat/"]' },
   gemini: { home: 'https://gemini.google.com/app', links: 'a[href*="/app/"]' },
+  grok: { home: 'https://grok.com/', links: 'a[href*="/c/"]' },
+  deepseek: { home: 'https://chat.deepseek.com/', links: 'a[href*="/chat/s/"]' },
+  kimi: { home: 'https://www.kimi.com/', links: 'a[href*="/chat/"]' },
 };
 const only = process.argv[2];
 const MAX_CHATS = 6;
@@ -34,7 +37,9 @@ const report = [];
 for (const [site, cfg] of Object.entries(SITES)) {
   if (only && only !== site) continue;
   await page.goto(cfg.home, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForTimeout(7000);
+  // The chat list can load slowly: wait until it appears (up to 25 s), then a moment more.
+  await page.waitForSelector(cfg.links, { timeout: 25000 }).catch(() => {});
+  await page.waitForTimeout(2000);
   const chats = await page.$$eval(cfg.links, (as) => [...new Set(as.map((a) => a.href))]);
   console.log(`${site}: ${chats.length} chats`);
 

@@ -172,3 +172,31 @@ describe('file name spoofing', () => {
     );
   });
 });
+
+describe('deep nesting', () => {
+  it('converts 300 nested containers without overflowing', () => {
+    const root = html(`${'<div>'.repeat(300)}<p>DEEP</p>${'</div>'.repeat(300)}`);
+    const blocks = blocksFromElement(root, { baseUrl: base });
+    expect(blocks).toEqual([{ type: 'paragraph', inlines: [{ type: 'text', text: 'DEEP' }] }]);
+  });
+});
+
+describe('citation markers', () => {
+  it('uses the clean number of DeepSeek-style citation markers', () => {
+    const blocks = blocksFromElement(
+      html(
+        '<p>Heat flows .<a href="https://example.org/a" aria-label="4"><span class="ds-markdown-cite"><span>-</span><span>4</span></span></a></p>',
+      ),
+      { baseUrl: base },
+    );
+    expect(blocks).toEqual([
+      {
+        type: 'paragraph',
+        inlines: [
+          { type: 'text', text: 'Heat flows .' },
+          { type: 'link', href: 'https://example.org/a', children: [{ type: 'text', text: '4' }] },
+        ],
+      },
+    ]);
+  });
+});

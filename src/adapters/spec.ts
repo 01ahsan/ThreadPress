@@ -38,6 +38,11 @@ export interface SiteSpec {
   title: (doc: Document) => string | undefined;
   codeLanguage?: (pre: Element) => string | undefined;
   isConversationPage?: (url: URL) => boolean;
+  /**
+   * For sites whose toolbar buttons have no "Copy" label (DeepSeek: icons only): the toolbar
+   * button after which the per-message export icon goes. Otherwise the labelled Copy button is used.
+   */
+  toolbarAnchor?: (turn: Element) => Element | null;
 }
 
 interface Found {
@@ -58,12 +63,23 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
         for (const el of Array.from(doc.querySelectorAll(sel))) tagged.set(el, role);
     }
     for (const t of spec.findTurns?.(doc) ?? []) tagged.set(t.el, t.role);
-    // Keep outermost matches only (checked through ancestors, so long chats stay fast), in document order.
-    const all = Array.from(tagged.keys()).filter((el) => {
+    // Keep outermost matches only (checked through ancestors, so long chats stay fast).
+    let all = Array.from(tagged.keys()).filter((el) => {
       for (let p = el.parentElement; p; p = p.parentElement) if (tagged.has(p)) return false;
       return true;
     });
-    all.sort((a, b) => (a.compareDocumentPosition(b) & 4 ? -1 : 1));
+    // Reading order is the order on screen. Virtual lists (Grok 2026) position rows by
+    // coordinates, so their order in the page's code can differ; code order breaks ties.
+    // Hidden rows (parked, recycled) are not part of the conversation on screen. Without a
+    // layout engine (unit tests) every box is empty, and code order is used alone.
+    const boxes = new Map(all.map((el) => [el, boxOf(el)]));
+    const hasLayout = all.some((el) => boxes.get(el) !== null);
+    if (hasLayout) all = all.filter((el) => boxes.get(el) !== null);
+    all.sort((a, b) => {
+      const dy = hasLayout ? (boxes.get(a) as DOMRect).top - (boxes.get(b) as DOMRect).top : 0;
+      if (Math.abs(dy) > 1) return dy;
+      return a.compareDocumentPosition(b) & 4 ? -1 : 1;
+    });
     return all.map((el) => ({ el, role: tagged.get(el) ?? 'unknown' }));
   };
 
@@ -142,6 +158,7 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
     count: () => find().length,
     turns: find,
     read: convert,
+    toolbarAnchor: (el) => spec.toolbarAnchor?.(el) ?? null,
     async collect(signal, onProgress) {
       const box = scroller();
       const order: string[] = [];
@@ -344,6 +361,22 @@ function quiet(el: Element, signal: AbortSignal, idle: number, max: number): Pro
       resolve();
     }
   });
+}
+
+/**
+ * The on-screen box of a message, or null if nothing of it is displayed. A wrapper with no box
+ * of its own (display: contents) is measured by its first displayed descendant.
+ */
+function boxOf(el: Element): DOMRect | null {
+  const own = el.getBoundingClientRect();
+  if (own.height > 0 || own.width > 0) return own;
+  let checked = 0;
+  for (const d of Array.from(el.querySelectorAll('*'))) {
+    const r = d.getBoundingClientRect();
+    if (r.height > 0 || r.width > 0) return r;
+    if (++checked > 50) break;
+  }
+  return null;
 }
 
 function firstMatch(root: Element, selectors: string[]): Element | null {

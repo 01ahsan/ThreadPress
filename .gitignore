@@ -7,3 +7,6 @@ playwright-report/
 
 # Live-test browser profile (contains test-account logins). Never commit.
 .live-profile/
+
+# Real-chat exports gathered during live checks (contain test conversations). Never commit.
+live-all/
