@@ -161,3 +161,14 @@ describe('LaTeX safety', () => {
     expect(out).toContain(String.raw`\end{aligned}`);
   });
 });
+
+describe('file name spoofing', () => {
+  it('removes bidi overrides and invisible characters that could disguise an extension', () => {
+    const d = new Date(2026, 0, 5);
+    const name = exportFileName('chatgpt', `report${String.fromCharCode(0x202e)}fdp.exe`, d, 'md');
+    expect(name).toBe('chatgpt-reportfdp.exe-2026-01-05.md');
+    expect(exportFileName('claude', `a${String.fromCharCode(0x200b)}b\tc`, d, 'md')).toBe(
+      'claude-ab-c-2026-01-05.md',
+    );
+  });
+});

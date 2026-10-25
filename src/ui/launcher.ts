@@ -21,7 +21,9 @@ const CSS = `
 .btn:focus-visible { outline: 2px solid #9bb7ff; outline-offset: 2px; }
 .btn svg { width: 24px; height: 24px; flex: none; }
 .label { white-space: nowrap; max-width: 0; overflow: hidden; transition: max-width .2s ease, margin .2s ease; }
-.btn:hover .label, .btn:focus-visible .label { max-width: 180px; margin: 0 4px 0 8px; }
+/* Stay open while the pointer is anywhere on the tab, including the hide button, so the
+   hide button does not move away as the pointer travels to it. */
+.wrap:hover .label, .wrap:focus-within .label { max-width: 180px; margin: 0 4px 0 8px; }
 .hide {
   width: 22px; height: 22px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
   background: rgba(20, 24, 40, .72); color: #fff; opacity: 0; transition: opacity .15s;

@@ -1,0 +1,35 @@
+name: Nightly stress
+# Ten times more fuzz cases than CI, on all three browser engines, every night and on demand.
+on:
+  schedule:
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+    inputs:
+      runs:
+        description: 'Fuzz chats per engine'
+        default: '5000'
+permissions:
+  contents: read
+jobs:
+  stress:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      FUZZ_RUNS: ${{ github.event.inputs.runs || '5000' }}
+      # A different seed range every night, so coverage keeps growing; failures print their seed.
+      FUZZ_SEED: ${{ github.run_number }}000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npx playwright test tests/e2e/fuzz.spec.ts tests/e2e/scale.spec.ts tests/e2e/stress.spec.ts tests/e2e/long-chats.spec.ts
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stress-failures
+          path: test-results/

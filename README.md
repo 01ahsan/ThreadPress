@@ -49,8 +49,10 @@ Want only a few lines? Highlight them first, then click ThreadPress.
 
 ```
 npm ci
-npm run check
-npm run test:e2e
+npm run check        # lint, types, unit tests, build
+npm run test:e2e     # browser tests in Chromium, Firefox and WebKit, incl. fuzz and stress
+FUZZ_RUNS=5000 npx playwright test tests/e2e/fuzz.spec.ts   # bigger fuzz run (FUZZ_SEED replays a failure)
+npm run test:live    # real sites with your own test accounts (see scripts/live.mjs)
 ```
 
 When a chat site changes its layout, see [docs/fixing-a-site.md](docs/fixing-a-site.md).

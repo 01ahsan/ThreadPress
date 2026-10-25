@@ -151,15 +151,24 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
         const repeats = new Map<string, number>();
         return find().map((f) => keyOf(f, repeats));
       };
-      /** Reads every mounted message not seen yet, slotting it in after the last known one before it. */
-      const harvest = async () => {
-        let last = -1;
+      /**
+       * Reads every mounted message not seen yet and slots it in place: messages above the first
+       * known one go just before it, the rest after the known one above them. Returns false if
+       * nothing on screen was known already (a gap: the screen moved too far since the last read).
+       */
+      const harvest = async (): Promise<boolean> => {
         const repeats = new Map<string, number>();
         const visible = find();
+        const keys = visible.map((f) => keyOf(f, repeats));
+        const firstKnown = keys.findIndex((k) => position.has(k));
+        const anchored = firstKnown >= 0 || order.length === 0;
+        // No overlap: append (we read top to bottom). The caller then steps back to fill the gap.
+        let last =
+          firstKnown >= 0 ? (position.get(keys[firstKnown] as string) as number) - 1 : order.length - 1;
         for (let i = 0; i < visible.length; i++) {
           throwIfAborted(signal);
           const f = visible[i] as Found;
-          const key = keyOf(f, repeats);
+          const key = keys[i] as string;
           const known = position.get(key);
           if (known !== undefined) {
             last = known;
@@ -174,6 +183,7 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
           if (i % 20 === 19) await nextFrame();
         }
         onProgress({ phase: 'reading', done: order.length });
+        return anchored;
       };
 
       if (!box) {
@@ -191,11 +201,17 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
         const now = new Set(mountedKeys());
         const complete = !spec.virtualised && [...atStart].every((k) => now.has(k));
         if (!complete) {
+          const step = Math.max(160, box.clientHeight * 0.8);
           for (let guard = 0; guard < 20000; guard++) {
             const before = box.scrollTop;
-            box.scrollTop = before + Math.max(160, box.clientHeight * 0.9);
-            await quiet(box, signal, 60, 1200);
-            await harvest();
+            box.scrollTop = before + step;
+            // Wait for the site to draw the new rows (or a short limit if nothing changes).
+            await changed(box, signal, 60, 700);
+            // A gap means the site drew late and a screen was skipped: step back and fill it.
+            for (let retry = 0; !(await harvest()) && retry < 4; retry++) {
+              box.scrollTop -= step / 2;
+              await changed(box, signal, 120, 2000);
+            }
             if (Math.abs(box.scrollTop - before) < 1) {
               // At the bottom: give a lazy list one more chance to grow.
               const h = box.scrollHeight;
@@ -237,14 +253,15 @@ async function loadOlder(
   onProgress: (p: Progress) => void,
 ): Promise<void> {
   let stable = 0;
-  let lastHeight = -1;
-  let lastCount = -1;
   let lastFirst: string | undefined;
-  // Nothing loaded at all: the chat is probably complete already, so a short check will do.
-  // Once older messages have arrived, confirm the start more patiently.
+  // How long to wait for older messages each round. It starts at 1.5 s and grows to twice the
+  // slowest load seen (up to 6 s), so slow sites and slow connections are not mistaken for the
+  // start of the chat. Once anything older has loaded, three empty rounds are needed to stop.
+  let patience = 1500;
   let grewEver = false;
-  for (let round = 0; round < 5000 && stable < (grewEver ? 4 : 2); round++) {
+  for (let round = 0; round < 5000 && stable < (grewEver ? 3 : 2); round++) {
     throwIfAborted(signal);
+    const started = performance.now();
     box.scrollTop = -box.scrollHeight;
     // Some sites (ChatGPT) load older messages on wheel input at the top, not on scroll position.
     box.dispatchEvent(
@@ -256,17 +273,19 @@ async function loadOlder(
       await quiet(box, signal, 60, 300);
       box.scrollTop = -box.scrollHeight;
     }
-    // Wait for the page to change (older messages arriving), or give up after a while. Each
-    // round then costs about as long as the site takes to respond.
-    await changed(box, signal, 120, grewEver ? 1200 : 900);
+    // Wait for the page to change (older messages arriving), or for the patience limit.
+    await changed(box, signal, 120, patience);
     // Compare by message identity, not element: virtual lists rebuild elements on every scroll.
     const found = keys();
     onProgress({ phase: 'loading', done: found.length });
-    const grew = box.scrollHeight !== lastHeight || found.length !== lastCount || found[0] !== lastFirst;
-    stable = grew ? 0 : stable + 1;
-    if (grew && round > 0) grewEver = true;
-    lastHeight = box.scrollHeight;
-    lastCount = found.length;
+    // Only a new oldest message counts as progress: a reply still streaming in at the bottom also
+    // changes the height and the message count, and must not keep this loop waiting.
+    const grew = round > 0 && found[0] !== lastFirst;
+    stable = grew || round === 0 ? 0 : stable + 1;
+    if (grew) {
+      grewEver = true;
+      patience = Math.min(6000, Math.max(patience, 2 * (performance.now() - started)));
+    }
     lastFirst = found[0];
   }
 }

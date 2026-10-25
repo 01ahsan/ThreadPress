@@ -7,8 +7,12 @@ export function exportFileName(site: string, title: string, date: Date, ext: str
     .join('-');
   let t = title
     .normalize('NFC')
-    // eslint-disable-next-line no-control-regex -- stripping control characters is the point
-    .replace(/[\u0000-\u001f\u007f<>:"/\\|?*]+/g, ' ')
+    // Invisible format characters (bidi overrides, zero-width marks) can disguise a file's real
+    // extension: a right-to-left override can make "...fdp.exe" display as "...exe.pdf".
+    // Control characters break file systems. Tabs and line breaks become separators first.
+    .replace(/\s+/g, ' ')
+    .replace(/[\p{Cc}\p{Cf}\p{Co}\p{Cn}]+/gu, '')
+    .replace(/[<>:"/\\|?*]+/g, ' ')
     .replace(/\s+/g, '-')
     .replace(/-{2,}/g, '-')
     .replace(/^[-. ]+|[-. ]+$/g, '');

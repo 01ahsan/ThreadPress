@@ -141,7 +141,7 @@ export const SPECS: Record<SiteId, SiteSpec> = {
       '.items-start .message-bubble',
       '.relative.group.flex.flex-col.justify-center.items-start',
     ],
-    userContent: ['.whitespace-pre-wrap', 'p'],
+    userContent: ['.whitespace-pre-wrap'],
     assistantContent: ['.response-content-markdown', '.markdown'],
     reasoning: ['.thinking-container'],
     virtualised: true,
