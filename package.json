@@ -1,6 +1,6 @@
 {
   "name": "threadpress",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "Export AI chat conversations to Markdown, JSON, plain text and more. Runs entirely on your device.",
   "license": "MIT",
@@ -12,7 +12,9 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:e2e": "npm run build && playwright test",
-    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+    "check": "npm run lint && npm run typecheck && npm test && npm run build",
+    "test:live": "npm run build && node scripts/live-test.mjs",
+    "live:login": "node scripts/live.mjs login"
   },
   "engines": {
     "node": ">=22.12"

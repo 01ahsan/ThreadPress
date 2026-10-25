@@ -33,6 +33,19 @@ const CASES: Case[] = [
     contains: ['Solve x² − 5x + 6 = 0', '$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}$', '**x = 2**'],
   },
   {
+    site: 'chatgpt',
+    fixture: 'layout-2026-10',
+    url: 'https://chatgpt.com/c/6add92d9-b1c0-83ee-a40c-212a9b647725',
+    title: 'Two exchanges',
+    roles: ['user', 'assistant', 'user', 'assistant'],
+    contains: [
+      '## You\n\nWhat is 2 + 2?\\\nAnswer briefly.',
+      '## ChatGPT\n\nIt is **4**.',
+      '- Two plus two',
+      'Six.',
+    ],
+  },
+  {
     site: 'claude',
     fixture: 'synthetic',
     url: 'https://claude.ai/chat/0b6f3c1e-0000-4000-8000-000000000001',

@@ -1,0 +1,62 @@
+% Two exchanges
+% Exported from ChatGPT by ThreadPress on 2026-10-24.
+% Compile with pdfLaTeX, XeLaTeX or LuaLaTeX.
+\documentclass[11pt,a4paper]{article}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+\else
+  \usepackage{fontspec}
+\fi
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage[normalem]{ulem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\lstset{basicstyle=\ttfamily\small, breaklines=true, columns=fullflexible, keepspaces=true,
+  frame=single, rulecolor=\color{black!15}, backgroundcolor=\color{black!3}, upquote=true}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+\title{Two exchanges}
+\date{ChatGPT \textperiodcentered{} 2026-10-24}
+\begin{document}
+\maketitle
+
+\section*{You}
+
+What is 2 + 2?\\
+Answer briefly.
+
+
+\section*{ChatGPT}
+
+It is \textbf{4}.
+
+\begin{itemize}
+  \item Two plus two
+\end{itemize}
+
+Check: $2+2=4$
+
+\begin{lstlisting}[language=bash]
+echo $((2 + 2))
+echo done
+\end{lstlisting}
+
+
+\section*{You}
+
+And 3 + 3?
+
+
+\section*{ChatGPT}
+
+Six.
+
+
+\end{document}

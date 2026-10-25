@@ -1,0 +1,37 @@
+Two exchanges
+ChatGPT · https://chatgpt.com/c/6add92d9-b1c0-83ee-a40c-212a9b647725
+Exported 2026-10-24T12:00:00.000Z
+
+
+You
+===
+
+What is 2 + 2?
+Answer briefly.
+
+
+ChatGPT
+=======
+
+It is 4.
+
+- Two plus two
+
+Check: $2+2=4$
+
+[code: bash]
+echo $((2 + 2))
+echo done
+[/code]
+
+
+You
+===
+
+And 3 + 3?
+
+
+ChatGPT
+=======
+
+Six.

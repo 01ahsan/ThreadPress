@@ -112,6 +112,11 @@ class Converter {
         } else pending.push({ type: 'math', ...math(el) });
         continue;
       }
+      if (isCodeBox(el)) {
+        flush();
+        out.push(this.code(el));
+        continue;
+      }
       if (INLINE_TAGS.has(el.localName) && !this.containsBlock(el)) {
         pending.push(...this.inline(el));
         continue;
@@ -188,6 +193,7 @@ class Converter {
     };
   }
 
+  /** A <pre>, or a code box without one (ChatGPT 2026: header with the language + code area). */
   private code(pre: Element): Block {
     const codeEl = pre.querySelector('code');
     let text: string;
@@ -195,9 +201,12 @@ class Converter {
     if (codeEl) text = codeEl.textContent ?? '';
     else if (lines.length) text = Array.from(lines, (l) => l.textContent ?? '').join('\n');
     else text = textWithout(pre, (e) => this.skipped(e));
-    text = text.replace(/\u00a0/g, ' ').replace(/\n$/, '');
+    text = text
+      .replace(/\r\n?/g, '\n')
+      .replace(/\u00a0/g, ' ')
+      .replace(/\n$/, '');
     const fromClass = (codeEl ?? pre).className.match(/(?:^|\s)(?:language|lang)-([\w#+.-]+)/)?.[1];
-    const language = fromClass ?? this.opts.codeLanguage?.(pre);
+    const language = fromClass ?? this.opts.codeLanguage?.(pre) ?? headerLanguage(pre);
     return { type: 'code', ...(language ? { language: language.toLowerCase() } : {}), text };
   }
 
@@ -291,7 +300,10 @@ class Converter {
   }
 
   private text(raw: string): Inline[] {
-    const s = raw.replace(/\u00a0/g, ' ').replace(/\u200b/g, '');
+    const s = raw
+      .replace(/\r\n?/g, '\n')
+      .replace(/\u00a0/g, ' ')
+      .replace(/\u200b/g, '');
     if (this.opts.preserveWhitespace) {
       const parts = s.split('\n');
       return parts.flatMap((p, i) =>
@@ -305,13 +317,15 @@ class Converter {
     if (ALWAYS_SKIP.has(el.localName)) return true;
     if (el.localName === 'input' && el.getAttribute('type') !== 'checkbox') return true;
     if (el.classList.contains('sr-only') || el.hasAttribute('hidden')) return true;
+    // Parts the site itself leaves out when copying (code block headers, buttons).
+    if (el.getAttribute('data-markdown-copy') === 'exclude') return true;
     return this.opts.skip?.(el) ?? false;
   }
 
   private containsBlock(el: Element): boolean {
     return (
       el.querySelector(
-        'p, div, ul, ol, pre, table, blockquote, h1, h2, h3, h4, h5, h6, hr, img, .katex-display',
+        'p, div, ul, ol, pre, table, blockquote, h1, h2, h3, h4, h5, h6, hr, img, .katex-display, code-block',
       ) !== null
     );
   }
@@ -320,6 +334,23 @@ class Converter {
 function math(el: Element): { tex: string; mathml?: MathNode } {
   const mathml = extractMathML(el);
   return { tex: extractTex(el), ...(mathml ? { mathml } : {}) };
+}
+
+/** Code containers that do not use <pre> (ChatGPT 2026, Gemini's <code-block>). */
+function isCodeBox(el: Element): boolean {
+  return el.matches('[data-code-block="true"], code-block');
+}
+
+const GENERIC_LABELS = /^(code|code snippet|snippet|copy|copy code|text|plaintext|plain text)$/i;
+
+/** The language label shown in a code block's header, if any. */
+function headerLanguage(box: Element): string | undefined {
+  const host = box.closest('[data-code-block="true"], code-block') ?? box;
+  const label = host.querySelector(
+    '[data-markdown-copy="exclude"] .truncate, [data-markdown-copy="exclude"] span, .code-block-decoration span, .code-block-decoration',
+  );
+  const t = label?.textContent?.trim() ?? '';
+  return t && /^[\w#+.\- ]{1,24}$/.test(t) && !GENERIC_LABELS.test(t) ? t.replace(/\s+/g, '-') : undefined;
 }
 
 function wrap(type: 'bold' | 'italic' | 'strike', flow: Flow[]): Flow[] {

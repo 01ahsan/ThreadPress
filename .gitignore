@@ -4,3 +4,6 @@ test-results/
 playwright-report/
 .DS_Store
 *.log
+
+# Live-test browser profile (contains test-account logins). Never commit.
+.live-profile/

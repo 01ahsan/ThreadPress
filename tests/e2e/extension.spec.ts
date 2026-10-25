@@ -35,6 +35,7 @@ test.afterAll(async () => {
 const SITES: [string, string, string, number][] = [
   ['chatgpt', 'synthetic-mixed', CHAT_URL, 4],
   ['chatgpt', 'layout-2026', 'https://chatgpt.com/c/0f0e0d0c-1111-2222-3333-444455556666', 2],
+  ['chatgpt', 'layout-2026-10', 'https://chatgpt.com/c/6add92d9-b1c0-83ee-a40c-212a9b647725', 4],
   ['claude', 'synthetic', 'https://claude.ai/chat/0b6f3c1e-0000-4000-8000-000000000001', 2],
   ['gemini', 'synthetic', 'https://gemini.google.com/app/1a2b3c4d5e6f', 2],
   ['grok', 'synthetic', 'https://grok.com/c/9f8e7d6c-0000-4000-8000-000000000002', 2],
@@ -174,5 +175,29 @@ test('Export icon next to each Copy button exports just that message and its que
   expect(text).toContain('Mass–energy equivalence');
   expect(text).not.toContain('Sort \\[3, 1, 2\\]');
   await expect(menu).toHaveCount(0);
+  await page.close();
+});
+
+test('ChatGPT (Oct 2026 layout): export icon after each Copy button, answer icon in the group toolbar', async () => {
+  const page = await context.newPage();
+  const url = 'https://chatgpt.com/c/6add92d9-b1c0-83ee-a40c-212a9b647725';
+  await page.route('**/*', (route) =>
+    route.request().url() === url
+      ? route.fulfill({
+          contentType: 'text/html; charset=utf-8',
+          body: readFileSync('tests/fixtures/chatgpt/layout-2026-10.html', 'utf8'),
+        })
+      : route.abort(),
+  );
+  await page.goto(url);
+  await expect(page.locator('threadpress-msg')).toHaveCount(3);
+  await expect(page.locator('[data-testid="copy-turn-action-button"] + threadpress-msg')).toHaveCount(1);
+  await page.locator('[data-testid="copy-turn-action-button"] + threadpress-msg').getByRole('button').click();
+  const dl = page.waitForEvent('download');
+  await page.locator('threadpress-menu').getByRole('menuitem', { name: 'Markdown', exact: true }).click();
+  const text = readFileSync(await (await dl).path(), 'utf8');
+  expect(text).toContain('What is 2 + 2?');
+  expect(text).toContain('It is **4**.');
+  expect(text).not.toContain('Six.');
   await page.close();
 });

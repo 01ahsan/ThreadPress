@@ -1,0 +1,152 @@
+{
+  "version": 1,
+  "title": "Two exchanges",
+  "site": "chatgpt",
+  "url": "https://chatgpt.com/c/6add92d9-b1c0-83ee-a40c-212a9b647725",
+  "exportedAt": "2026-10-24T12:00:00.000Z",
+  "messages": [
+    {
+      "role": "user",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "What is 2 + 2?"
+            },
+            {
+              "type": "break"
+            },
+            {
+              "type": "text",
+              "text": "Answer briefly."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "It is "
+            },
+            {
+              "type": "bold",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "4"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "."
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "blocks": [
+                {
+                  "type": "paragraph",
+                  "inlines": [
+                    {
+                      "type": "text",
+                      "text": "Two plus two"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Check: "
+            },
+            {
+              "type": "math",
+              "tex": "2+2=4",
+              "mathml": {
+                "tag": "math",
+                "children": [
+                  {
+                    "tag": "mrow",
+                    "children": [
+                      {
+                        "tag": "mn",
+                        "text": "2"
+                      },
+                      {
+                        "tag": "mo",
+                        "text": "+"
+                      },
+                      {
+                        "tag": "mn",
+                        "text": "2"
+                      },
+                      {
+                        "tag": "mo",
+                        "text": "="
+                      },
+                      {
+                        "tag": "mn",
+                        "text": "4"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "language": "bash",
+          "text": "echo $((2 + 2))\necho done"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "And 3 + 3?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Six."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

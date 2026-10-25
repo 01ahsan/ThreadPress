@@ -69,9 +69,9 @@ export function startMessageButtons(doc: Document, getAdapter: () => Adapter | n
     if (!adapter) return;
     const turns = adapter.turns();
     const set = new Set(turns.map((t) => t.el));
-    for (const turn of turns) {
+    for (const [i, turn] of turns.entries()) {
       if (done.get(turn.el)?.isConnected) continue;
-      const copy = findCopyButton(turn.el, set);
+      const copy = findCopyButton(turn.el, set, turns[i + 1]?.el ?? null);
       if (!copy) continue;
       // Sites often wrap each toolbar button in its own element; insert after that wrapper so
       // the icon lines up with the others, but only when it really is one item of a toolbar.
@@ -99,7 +99,7 @@ export function startMessageButtons(doc: Document, getAdapter: () => Adapter | n
 }
 
 /** The message's own Copy button: inside the message, or in a toolbar right after it. */
-function findCopyButton(turn: Element, turns: Set<Element>): HTMLElement | null {
+function findCopyButton(turn: Element, turns: Set<Element>, next: Element | null): HTMLElement | null {
   const isCopy = (b: Element) =>
     COPY.test(b.getAttribute('aria-label') ?? '') ||
     COPY.test(b.getAttribute('title') ?? '') ||
@@ -115,19 +115,28 @@ function findCopyButton(turn: Element, turns: Set<Element>): HTMLElement | null 
     (b) =>
       isCopy(b) &&
       ownedBy(b) === turn &&
-      !b.closest('pre, code, .markdown, [class*="code-block"], [class*="codeblock"]'),
+      !b.closest(
+        'pre, code, code-block, .markdown, [data-code-block], [data-code-block-controls], [data-markdown-text-style], [class*="MarkdownRoot"], [class*="code-block"], [class*="codeblock"]',
+      ),
   );
   if (own.length) return own[own.length - 1] as HTMLElement;
-  // Toolbar placed just after the message (DeepSeek, Gemini): look in the next couple of siblings.
-  let sib = turn.nextElementSibling;
-  for (let i = 0; sib && i < 2; i++, sib = sib.nextElementSibling) {
-    if (turns.has(sib)) break;
-    const holder = sib;
-    // A Copy button inside another message belongs to that message, not this one.
-    const b = Array.from(holder.querySelectorAll('button, [role="button"]')).find(
-      (x) => isCopy(x) && !ownedBy(x, holder),
-    );
-    if (b) return b as HTMLElement;
+  // Toolbar placed after the message (DeepSeek, Gemini, ChatGPT): look at the next couple of
+  // siblings, climbing out a few levels while this message is the last one in its container
+  // (ChatGPT puts an answer's toolbar at the end of the question-and-answer group).
+  let node: Element | null = turn;
+  for (let depth = 0; node && depth < 5; depth++, node = node.parentElement) {
+    // Messages are in page order, so only the next message can be "later" inside a container.
+    if (depth > 0 && next && node.contains(next)) break;
+    let sib = node.nextElementSibling;
+    for (let i = 0; sib && i < 2; i++, sib = sib.nextElementSibling) {
+      if (turns.has(sib) || (next && sib.contains(next))) return null;
+      const holder = sib;
+      // A Copy button inside another message belongs to that message, not this one.
+      const b = Array.from(holder.querySelectorAll('button, [role="button"]')).find(
+        (x) => isCopy(x) && !ownedBy(x, holder),
+      );
+      if (b) return b as HTMLElement;
+    }
   }
   return null;
 }

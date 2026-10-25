@@ -11,9 +11,10 @@ const text = (doc: Document, sel: string) => doc.querySelector(sel)?.textContent
 const TURN_LABEL = /^\s*(you said|chatgpt said|chatgpt)\s*:?\s*$/i;
 
 /**
- * Current ChatGPT layout: every turn starts with a hidden heading. The heading may carry the
- * role as data-conversation-role; otherwise its English text gives it away. The turn itself is
- * the nearest <article>/turn container, or the nearest ancestor with the "group" class.
+ * Current ChatGPT layout (checked on chatgpt.com, 2026-10-25): each question/answer exchange is
+ * one "group" container holding two blocks. Each block starts with a hidden heading ("You said:"
+ * / "ChatGPT said:"); the answer's block carries data-content-search-unit-key and its heading
+ * data-conversation-role. A message is the block around its heading, never the shared group.
  */
 function chatgptTurns(doc: Document): { el: Element; role: 'user' | 'assistant' }[] {
   const out: { el: Element; role: 'user' | 'assistant' }[] = [];
@@ -30,15 +31,10 @@ function chatgptTurns(doc: Document): { el: Element; role: 'user' | 'assistant' 
             : 'assistant'
           : null;
     if (!role) continue;
-    let turn: Element | null = h.closest('article, [data-testid^="conversation-turn"], [data-turn]');
-    for (
-      let p = h.parentElement, depth = 0;
-      !turn && p && p !== root && depth < 12;
-      p = p.parentElement, depth++
-    ) {
-      if (p.classList.contains('group')) turn = p;
-    }
-    if (!turn && h.parentElement && h.parentElement !== root) turn = h.parentElement;
+    const turn =
+      h.closest(
+        '[data-content-search-unit-key], [data-message-author-role], article, [data-testid^="conversation-turn"], [data-turn]',
+      ) ?? (h.parentElement !== root ? h.parentElement : null);
     if (turn) out.push({ el: turn, role });
   }
   return out;
@@ -49,19 +45,39 @@ export const SPECS: Record<SiteId, SiteSpec> = {
     site: 'chatgpt',
     // Older layout: role on each message. Current layout (2026): each turn is announced by a
     // hidden heading ("You said:" / "ChatGPT said:"), found by findTurns below.
-    user: ['[data-message-author-role="user"]', '[data-turn="user"]'],
-    assistant: ['[data-message-author-role="assistant"]', '[data-turn="assistant"]'],
+    user: [
+      '[data-content-search-unit-key$=":user"]',
+      '[data-message-author-role="user"]',
+      '[data-turn="user"]',
+    ],
+    assistant: [
+      '[data-content-search-unit-key$=":assistant"]',
+      '[data-message-author-role="assistant"]',
+      '[data-turn="assistant"]',
+    ],
     findTurns: chatgptTurns,
-    userContent: ['.whitespace-pre-wrap', '[data-message-author-role="user"]'],
-    assistantContent: ['.markdown', '[data-message-author-role="assistant"]'],
+    userContent: ['[data-user-message-bubble]', '.whitespace-pre-wrap', '[data-message-author-role="user"]'],
+    assistantContent: [
+      '[data-markdown-text-style="assistant-message"]',
+      '[class*="MarkdownRoot"]',
+      '.markdown',
+      '[data-message-author-role="assistant"]',
+    ],
     userIsPlainText: true,
     skip: '[data-testid$="-turn-action-button"], [data-oai-writing-block-surface] > header, [data-oai-writing-block-surface] > button',
     skipIf: (el) => /^h[1-6]$/.test(el.localName) && TURN_LABEL.test(el.textContent ?? ''),
     scroller: ['.thread-scroll-container', '[data-scroll-root]'],
-    key: (el) =>
-      el.getAttribute('data-message-id') ??
-      el.querySelector('[data-message-id]')?.getAttribute('data-message-id') ??
-      el.getAttribute('data-testid'),
+    key: (el) => {
+      const own =
+        el.getAttribute('data-content-search-unit-key') ??
+        el.getAttribute('data-message-id') ??
+        el.querySelector('[data-message-id]')?.getAttribute('data-message-id') ??
+        el.getAttribute('data-testid');
+      if (own) return own;
+      // The question's block has no id of its own: use its exchange's id.
+      const exchange = el.closest('[data-turn-key]')?.getAttribute('data-turn-key');
+      return exchange ? `${exchange}:user` : null;
+    },
     model: (el) =>
       (el.getAttribute('data-message-model-slug') ??
         el.querySelector('[data-message-model-slug]')?.getAttribute('data-message-model-slug')) ||
