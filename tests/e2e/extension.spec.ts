@@ -100,3 +100,42 @@ test('manifest asks for no permissions', () => {
   expect(manifest.host_permissions).toBeUndefined();
   expect(manifest.optional_permissions).toBeUndefined();
 });
+
+test('floating button appears on chat pages only and opens the panel', async () => {
+  const page = await context.newPage();
+  const home = 'https://chatgpt.com/';
+  await page.route('**/*', (route) => {
+    const u = route.request().url();
+    if (u === CHAT_URL) {
+      return route.fulfill({
+        contentType: 'text/html; charset=utf-8',
+        headers: { 'content-security-policy': "default-src 'self'; script-src 'nonce-x'" },
+        body: readFileSync('tests/fixtures/chatgpt/synthetic-mixed.html', 'utf8'),
+      });
+    }
+    if (u === home)
+      return route.fulfill({ contentType: 'text/html', body: '<title>ChatGPT</title><main>New chat</main>' });
+    if (route.request().resourceType() === 'image')
+      return route.fulfill({ contentType: 'image/png', body: PIXEL });
+    return route.abort();
+  });
+
+  await page.goto(home);
+  await page.waitForTimeout(2000);
+  await expect(page.locator('threadpress-launcher')).toHaveCount(0);
+
+  await page.goto(CHAT_URL);
+  const launcher = page.locator('threadpress-launcher');
+  await expect(launcher.getByRole('button', { name: 'ThreadPress: Export chat' })).toBeVisible();
+  await launcher.getByRole('button', { name: 'ThreadPress: Export chat' }).hover();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: 'test-results/launcher-hover.png' });
+  await launcher.getByRole('button', { name: 'ThreadPress: Export chat' }).click();
+  await expect(page.locator('threadpress-panel').getByRole('dialog', { name: 'ThreadPress' })).toBeVisible();
+
+  await page.keyboard.press('Escape');
+  await launcher.getByRole('button', { name: 'ThreadPress: Export chat' }).hover();
+  await launcher.getByRole('button', { name: 'Hide until the page reloads' }).click();
+  await expect(page.locator('threadpress-launcher')).toHaveCount(0);
+  await page.close();
+});

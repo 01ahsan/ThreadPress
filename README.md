@@ -13,7 +13,8 @@ Save your AI chats as files. Free, private, no sign-up.
 3. Type `chrome://extensions` in the address bar and press Enter. (Edge: `edge://extensions`. Brave: `brave://extensions`.)
 4. Turn on **Developer mode**.
 5. Click **Load unpacked** and select the **ThreadPress** folder.
-6. Click the puzzle-piece icon next to the address bar and pin ThreadPress.
+
+That's it: an **Export chat** button now appears on the right edge of every AI chat page.
 
 ## Install on Firefox
 
@@ -21,7 +22,7 @@ Open the [install page](docs/index.html), click **Download raw file**, open the 
 
 ## Use
 
-1. Open a chat and click **ThreadPress**.
+1. Open a chat and click the **Export chat** button on the right edge of the page (or the ThreadPress icon in the toolbar).
 2. Choose **Whole chat**, or **Choose messages** to tick the ones you want.
 3. Pick a format and click **Export**.
 

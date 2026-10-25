@@ -1,0 +1,48 @@
+<!doctype html>
+<!-- Simulates a long DeepSeek-style chat in a virtual list: only the messages near the
+     viewport exist in the page; everything else is removed as you scroll. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Windowed chat - DeepSeek</title>
+<style>body{margin:0;font:15px sans-serif} #sc{height:600px;overflow-y:auto} #list{position:relative}</style>
+</head>
+<body>
+<div class="ds-scroll-area" id="sc"><div class="ds-virtual-list" id="list"></div></div>
+<script>
+  const N = 400;
+  const H = 80;
+  const sc = document.getElementById('sc');
+  const list = document.getElementById('list');
+  list.style.height = N * H + 'px';
+  function item(i) {
+    const w = document.createElement('div');
+    w.setAttribute('data-virtual-list-item-key', 'k' + i);
+    w.style.cssText = 'position:absolute;left:0;right:0;top:' + i * H + 'px;height:' + H + 'px';
+    const m = document.createElement('div');
+    m.className = 'ds-message';
+    if (i % 2) {
+      const md = document.createElement('div');
+      md.className = 'ds-markdown ds-assistant-message-main-content';
+      const p = document.createElement('p');
+      p.textContent = 'Answer ' + i;
+      md.append(p);
+      m.append(md);
+    } else {
+      const t = document.createElement('div');
+      t.className = 'ds-collapsible-text';
+      t.textContent = 'Question ' + i;
+      m.append(t);
+    }
+    w.append(m);
+    return w;
+  }
+  function render() {
+    const s = Math.max(0, Math.floor(sc.scrollTop / H) - 3);
+    const e = Math.min(N, Math.ceil((sc.scrollTop + sc.clientHeight) / H) + 3);
+    list.replaceChildren(...Array.from({ length: e - s }, (_, j) => item(s + j)));
+  }
+  sc.addEventListener('scroll', render);
+  sc.scrollTop = N * H;
+  render();
+</script>
+</body>
+</html>

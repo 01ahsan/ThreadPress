@@ -8,7 +8,6 @@ import { blocksFromElement, type ConvertOptions } from '../ir/from-dom';
 import { inlineText } from '../ir/inline';
 import type { Block, Message, Role } from '../ir/types';
 import { nextFrame, throwIfAborted } from './chunk';
-import { findScrollContainer } from './scroll-loader';
 import type { Adapter, AdapterContext, CollectedMessage, Progress } from './types';
 
 export interface SiteSpec {
@@ -54,10 +53,11 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
       for (const sel of selectors)
         for (const el of Array.from(doc.querySelectorAll(sel))) tagged.set(el, role);
     }
-    // Keep outermost matches only, in document order.
-    const all = Array.from(tagged.keys()).filter(
-      (el) => !Array.from(tagged.keys()).some((other) => other !== el && other.contains(el)),
-    );
+    // Keep outermost matches only (checked through ancestors, so long chats stay fast), in document order.
+    const all = Array.from(tagged.keys()).filter((el) => {
+      for (let p = el.parentElement; p; p = p.parentElement) if (tagged.has(p)) return false;
+      return true;
+    });
     all.sort((a, b) => (a.compareDocumentPosition(b) & 4 ? -1 : 1));
     return all.map((el) => ({ el, role: tagged.get(el) ?? 'unknown' }));
   };
@@ -101,11 +101,13 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
   };
 
   const scroller = (): Element | null => {
-    for (const sel of spec.scroller ?? []) {
-      const el = doc.querySelector(sel);
-      if (el && el.scrollHeight > el.clientHeight + 8) return el;
-    }
-    return findScrollContainer(find()[0]?.el ?? null);
+    const found = find();
+    const anchors = [found[found.length - 1]?.el, found[0]?.el].filter((e): e is Element => !!e);
+    const candidates: Element[] = [];
+    for (const sel of spec.scroller ?? []) candidates.push(...Array.from(doc.querySelectorAll(sel)));
+    for (const a of anchors) for (let el = a.parentElement; el; el = el.parentElement) candidates.push(el);
+    if (doc.scrollingElement) candidates.push(doc.scrollingElement);
+    return candidates.find(canScroll) ?? null;
   };
 
   return {
@@ -116,7 +118,13 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
     async collect(signal, onProgress) {
       const box = scroller();
       const order: string[] = [];
+      const position = new Map<string, number>();
       const seen = new Map<string, CollectedMessage>();
+      const mountedKeys = () => {
+        const repeats = new Map<string, number>();
+        return find().map((f) => keyOf(f, repeats));
+      };
+      /** Reads every mounted message not seen yet, slotting it in after the last known one before it. */
       const harvest = async () => {
         let last = -1;
         const repeats = new Map<string, number>();
@@ -125,74 +133,132 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
           throwIfAborted(signal);
           const f = visible[i] as Found;
           const key = keyOf(f, repeats);
-          const known = order.indexOf(key);
-          if (known >= 0) {
+          const known = position.get(key);
+          if (known !== undefined) {
             last = known;
             continue;
           }
           const message = convert(f);
-          if (!message.blocks.length) continue;
+          if (!message.blocks.length) continue; // not rendered yet; picked up on a later pass
           order.splice(last + 1, 0, key);
           last += 1;
+          for (let idx = last; idx < order.length; idx++) position.set(order[idx] as string, idx);
           seen.set(key, { key, message, preview: preview(message) });
           if (i % 20 === 19) await nextFrame();
         }
         onProgress({ phase: 'reading', done: order.length });
       };
 
-      if (box) await scrollToTop(box, () => find().length, signal, onProgress);
-      if (box && spec.virtualised) {
-        // Walk down one screen at a time, reading whatever is mounted.
-        for (let guard = 0; guard < 2000; guard++) {
-          await harvest();
-          const before = box.scrollTop;
-          box.scrollTop = before + box.clientHeight * 0.85;
-          await settle(signal, 140);
-          if (Math.abs(box.scrollTop - before) < 2) break;
-        }
+      if (!box) {
         await harvest();
-      } else {
-        await harvest();
+        return order.map((k) => seen.get(k) as CollectedMessage);
       }
-      if (box) box.scrollTop = box.scrollHeight;
+
+      const atStart = new Set(mountedKeys());
+      try {
+        await loadOlder(box, () => mountedKeys(), signal, onProgress);
+        await harvest();
+        // If the newest messages are still mounted now that the oldest are, the whole chat is
+        // in the page and one read was enough. Otherwise the site unloads off-screen messages,
+        // so walk down a screen at a time and read as we go.
+        const now = new Set(mountedKeys());
+        const complete = !spec.virtualised && [...atStart].every((k) => now.has(k));
+        if (!complete) {
+          for (let guard = 0; guard < 20000; guard++) {
+            const before = box.scrollTop;
+            box.scrollTop = before + Math.max(160, box.clientHeight * 0.75);
+            await quiet(box, signal, 120, 1500);
+            await harvest();
+            if (Math.abs(box.scrollTop - before) < 1) {
+              // At the bottom: give a lazy list one more chance to grow.
+              const h = box.scrollHeight;
+              await quiet(box, signal, 300, 1500);
+              if (box.scrollHeight === h) break;
+            }
+          }
+        }
+      } finally {
+        box.scrollTop = box.scrollHeight;
+      }
       return order.map((k) => seen.get(k) as CollectedMessage);
     },
   };
 }
 
-/** Scrolls to the oldest message until no more load. Handles column-reverse lists (negative scrollTop). */
-async function scrollToTop(
+/** True if the element really scrolls (tested by nudging it, not by reading styles). */
+function canScroll(el: Element): boolean {
+  if (el.scrollHeight - el.clientHeight < 40) return false;
+  const prev = el.scrollTop;
+  el.scrollTop = prev - 2;
+  let moved = el.scrollTop !== prev;
+  if (!moved) {
+    el.scrollTop = prev + 2;
+    moved = el.scrollTop !== prev;
+  }
+  el.scrollTop = prev;
+  return moved;
+}
+
+/**
+ * Scrolls to the oldest message until nothing older loads. Works for normal lists and for
+ * column-reverse lists (negative scrollTop), and waits for the page to go quiet each time.
+ */
+async function loadOlder(
   box: Element,
-  count: () => number,
+  keys: () => string[],
   signal: AbortSignal,
   onProgress: (p: Progress) => void,
 ): Promise<void> {
   let stable = 0;
-  let last = -1;
   let lastHeight = -1;
-  for (let round = 0; round < 400 && stable < 3; round++) {
+  let lastCount = -1;
+  let lastFirst: string | undefined;
+  for (let round = 0; round < 5000 && stable < 3; round++) {
     throwIfAborted(signal);
     box.scrollTop = -box.scrollHeight;
-    await settle(signal, 350);
-    const n = count();
-    onProgress({ phase: 'loading', done: n });
-    stable = n === last && box.scrollHeight === lastHeight ? stable + 1 : 0;
-    last = n;
+    // Nudge down and back up: some sites only load more on a fresh scroll event at the top.
+    if (stable > 0) {
+      box.scrollTop += 40;
+      await quiet(box, signal, 60, 300);
+      box.scrollTop = -box.scrollHeight;
+    }
+    await quiet(box, signal, 450, 4000);
+    // Compare by message identity, not element: virtual lists rebuild elements on every scroll.
+    const found = keys();
+    onProgress({ phase: 'loading', done: found.length });
+    const grew = box.scrollHeight !== lastHeight || found.length !== lastCount || found[0] !== lastFirst;
+    stable = grew ? 0 : stable + 1;
     lastHeight = box.scrollHeight;
+    lastCount = found.length;
+    lastFirst = found[0];
   }
 }
 
-function settle(signal: AbortSignal, ms: number): Promise<void> {
+/** Resolves once the element's subtree has had no changes for `idle` ms (or after `max` ms). */
+function quiet(el: Element, signal: AbortSignal, idle: number, max: number): Promise<void> {
   return new Promise((resolve, reject) => {
-    const t = setTimeout(resolve, ms);
-    signal.addEventListener(
-      'abort',
-      () => {
-        clearTimeout(t);
-        reject(new DOMException('Export cancelled', 'AbortError'));
-      },
-      { once: true },
-    );
+    let timer = setTimeout(done, idle);
+    const cap = setTimeout(done, max);
+    const observer = new MutationObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(done, idle);
+    });
+    observer.observe(el, { childList: true, subtree: true, characterData: true });
+    const onAbort = () => {
+      cleanup();
+      reject(new DOMException('Export cancelled', 'AbortError'));
+    };
+    signal.addEventListener('abort', onAbort, { once: true });
+    function cleanup() {
+      clearTimeout(timer);
+      clearTimeout(cap);
+      observer.disconnect();
+      signal.removeEventListener('abort', onAbort);
+    }
+    function done() {
+      cleanup();
+      resolve();
+    }
   });
 }
 

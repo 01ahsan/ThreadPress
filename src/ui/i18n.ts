@@ -38,6 +38,8 @@ const en = {
   ai: 'AI',
   highlightHint: 'Exports only the text you highlighted.',
   privacy: 'Works on this device. Nothing is uploaded.',
+  launcher: 'Export chat',
+  hideButton: 'Hide until the page reloads',
 } as const;
 
 export type MessageKey = keyof typeof en;
@@ -79,6 +81,8 @@ const bn: Partial<Record<MessageKey, string>> = {
   ai: 'AI',
   highlightHint: 'শুধু হাইলাইট করা লেখা এক্সপোর্ট হবে।',
   privacy: 'এই ডিভাইসেই কাজ করে। কিছুই আপলোড হয় না।',
+  launcher: 'চ্যাট এক্সপোর্ট',
+  hideButton: 'পাতা রিলোড না হওয়া পর্যন্ত লুকান',
 };
 
 const tables: Record<string, Partial<Record<MessageKey, string>>> = { en, bn };
