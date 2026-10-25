@@ -2,7 +2,7 @@
 
 Listing title (from the manifest): **ThreadPress - AI Chat Exporter**. Minimum versions: Chrome/Edge 111, Firefox 140.
 
-Images: `store/screenshots/*.png` (1280×800), `store/promo-440x280.png`, icon `assets/icons/icon-128.png`.
+Images: `store/screenshots/*.png` (1280×800), `store/promo-440x280.png`, icon `assets/icons/icon-128.png`, Edge logo `store/logo-300.png` (300×300).
 Packages (from the latest GitHub release): `chrome-edge.zip` for Chrome and Edge, `firefox.zip` for Firefox.
 Privacy policy URL: https://github.com/01ahsan/ThreadPress/blob/main/PRIVACY.md
 
