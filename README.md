@@ -66,7 +66,7 @@ FUZZ_RUNS=5000 npx playwright test tests/e2e/fuzz.spec.ts   # bigger fuzz run (F
 npm run test:live    # real sites with your own test accounts (see scripts/live.mjs)
 ```
 
-When a chat site changes its layout, see [docs/fixing-a-site.md](docs/fixing-a-site.md).
+To build the extension packages yourself, see [BUILDING.md](BUILDING.md). When a chat site changes its layout, see [docs/fixing-a-site.md](docs/fixing-a-site.md).
 
 </details>
 
