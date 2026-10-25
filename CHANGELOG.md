@@ -2,6 +2,10 @@
 
 All notable changes to ThreadPress. Versions follow [semantic versioning](https://semver.org).
 
+## 1.0.1 (2026-10-25)
+
+- The floating button's hide (×) is now always clickable; on some systems the button's corner covered it.
+
 ## 1.0.0 (2026-10-25)
 
 First production release.

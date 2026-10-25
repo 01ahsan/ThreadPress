@@ -27,7 +27,7 @@ const CSS = `
 .hide {
   width: 22px; height: 22px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
   background: rgba(20, 24, 40, .72); color: #fff; opacity: 0; transition: opacity .15s;
-  position: absolute; top: -10px; left: -10px;
+  position: absolute; top: -10px; left: -10px; z-index: 1; /* above the button's corner, so it is always clickable */
 }
 .wrap:hover .hide, .hide:focus-visible { opacity: 1; }
 .hide svg { width: 12px; height: 12px; }

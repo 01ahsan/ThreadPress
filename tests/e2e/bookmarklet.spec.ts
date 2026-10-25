@@ -92,7 +92,8 @@ test('PDF opens the print view', async ({ page }) => {
   await openFixture(page, 'chatgpt/synthetic-mixed.html', CHAT_URL);
   const panel = await clickBookmarklet(page);
   await panel.getByRole('button', { name: 'Export PDF' }).click();
-  await expect(panel.getByRole('status')).toContainText('Save as PDF');
+  // Allow for the few seconds spent confirming there are no older messages to load.
+  await expect(panel.getByRole('status')).toContainText('Save as PDF', { timeout: 20_000 });
 });
 
 test('choose messages: only my prompts', async ({ page }) => {

@@ -122,23 +122,38 @@ test('floating button appears on chat pages only and opens the panel', async () 
     return route.abort();
   });
 
-  await page.goto(home);
-  await page.waitForTimeout(2000);
-  await expect(page.locator('threadpress-launcher')).toHaveCount(0);
-
-  await page.goto(CHAT_URL);
+  // Steps are named, and actions have short timeouts, so a failure on CI names the exact step.
   const launcher = page.locator('threadpress-launcher');
-  await expect(launcher.getByRole('button', { name: 'ThreadPress: Export chat' })).toBeVisible();
-  await launcher.getByRole('button', { name: 'ThreadPress: Export chat' }).hover();
-  await page.waitForTimeout(300);
-  await page.screenshot({ path: 'test-results/launcher-hover.png' });
-  await launcher.getByRole('button', { name: 'ThreadPress: Export chat' }).click();
-  await expect(page.locator('threadpress-panel').getByRole('dialog', { name: 'ThreadPress' })).toBeVisible();
+  const openButton = launcher.getByRole('button', { name: 'ThreadPress: Export chat' });
+  const panel = page.locator('threadpress-panel').getByRole('dialog', { name: 'ThreadPress' });
 
-  await page.keyboard.press('Escape');
-  await launcher.getByRole('button', { name: 'ThreadPress: Export chat' }).hover();
-  await launcher.getByRole('button', { name: 'Hide until the page reloads' }).click();
-  await expect(page.locator('threadpress-launcher')).toHaveCount(0);
+  await test.step('no button on a page without a chat', async () => {
+    await page.goto(home);
+    await page.waitForTimeout(2000);
+    await expect(launcher).toHaveCount(0);
+  });
+  await test.step('button appears on a chat page', async () => {
+    await page.goto(CHAT_URL);
+    await expect(openButton).toBeVisible({ timeout: 10_000 });
+  });
+  await test.step('hovering shows the label', async () => {
+    await openButton.hover({ timeout: 10_000 });
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: 'test-results/launcher-hover.png' });
+  });
+  await test.step('clicking opens the panel', async () => {
+    await openButton.click({ timeout: 10_000 });
+    await expect(panel).toBeVisible({ timeout: 10_000 });
+  });
+  await test.step('Escape closes the panel', async () => {
+    await page.keyboard.press('Escape');
+    await expect(panel).toHaveCount(0, { timeout: 10_000 });
+  });
+  await test.step('the hide button removes the floating button', async () => {
+    await openButton.hover({ timeout: 10_000 });
+    await launcher.getByRole('button', { name: 'Hide until the page reloads' }).click({ timeout: 10_000 });
+    await expect(launcher).toHaveCount(0, { timeout: 10_000 });
+  });
   await page.close();
 });
 
