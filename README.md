@@ -6,22 +6,30 @@ Save your AI chats as files. Free, private, no sign-up.
 
 **Saves as:** PDF, Word, Markdown, HTML, LaTeX, plain text or JSON. Equations, code, tables and every language stay intact.
 
-## Install on Chrome, Edge or Brave
+## Download
 
-1. [Download ThreadPress](https://github.com/01ahsan/ThreadPress/releases/latest/download/ThreadPress-extension.zip).
-2. Open the downloaded file and choose **Extract all**. You get a folder called **ThreadPress**.
-3. Type `chrome://extensions` in the address bar and press Enter. (Edge: `edge://extensions`. Brave: `brave://extensions`.)
-4. Turn on **Developer mode**.
-5. Click **Load unpacked** and select the **ThreadPress** folder.
+There is **one download for every browser**:
+
+**[⬇ Download ThreadPress-extension.zip](https://github.com/01ahsan/ThreadPress/releases/latest/download/ThreadPress-extension.zip)**
+
+Open the downloaded file and choose **Extract all**. You get a folder called **ThreadPress**. Then follow the steps for your browser below.
+
+> On the [releases page](https://github.com/01ahsan/ThreadPress/releases/latest) you will also see `chrome-edge.zip` and `firefox.zip`. Those are only for publishing to the browser stores. You don't need them.
+
+## Install on Chrome, Edge, Brave, Vivaldi or Opera
+
+1. Type `chrome://extensions` in the address bar and press Enter. (Edge: `edge://extensions`. Brave: `brave://extensions`.)
+2. Turn on **Developer mode**.
+3. Click **Load unpacked** and select the **ThreadPress** folder.
 
 That's it: an **Export chat** button now appears on the right edge of every AI chat page.
 
 ## Install on Firefox
 
-ThreadPress is coming to Firefox Add-ons. Until then, either:
+1. Type `about:debugging#/runtime/this-firefox` in the address bar and press Enter.
+2. Click **Load Temporary Add-on…** and select the `manifest.json` file inside the **ThreadPress** folder.
 
-- **Try it now:** extract the same download, type `about:debugging#/runtime/this-firefox` in the address bar, click **Load Temporary Add-on…**, and pick `manifest.json` in the **ThreadPress** folder. Firefox removes it when it restarts.
-- **Use the bookmark:** open the [install page](docs/index.html), click **Download raw file**, open the file, and drag the **ThreadPress** button onto your bookmarks bar.
+Firefox removes it when Firefox restarts, until ThreadPress is published on Firefox Add-ons. For something that stays, use the bookmark instead: open the [install page](docs/index.html), click **Download raw file**, open the file, and drag the **ThreadPress** button onto your bookmarks bar.
 
 ## Use
 

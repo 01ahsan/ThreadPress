@@ -23,5 +23,5 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           awk -v v="$VERSION" '$0 ~ "^## "v" " {f=1; next} /^## / {f=0} f' CHANGELOG.md > notes.md
           test -s notes.md || { echo "No CHANGELOG.md section for $VERSION"; exit 1; }
-          printf '\nInstall or update: download **ThreadPress-extension.zip** below, extract it over your ThreadPress folder, and click reload on the extensions page.\n' >> notes.md
+          printf '\n**Download `ThreadPress-extension.zip`** below. It works in Chrome, Edge, Brave, Vivaldi, Opera and Firefox; see the README for install steps. To update, extract it over your ThreadPress folder and click reload on the extensions page.\n\n`chrome-edge.zip` and `firefox.zip` are only for publishing to the browser stores. You do not need them.\n' >> notes.md
           gh release create "$GITHUB_REF_NAME" dist/ThreadPress-extension.zip dist/store/chrome-edge.zip dist/store/firefox.zip --title "ThreadPress $GITHUB_REF_NAME" --notes-file notes.md
