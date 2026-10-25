@@ -3,6 +3,7 @@
 // shortcut open the same panel.
 import { detect } from '../export-flow';
 import { mountLauncher } from '../ui/launcher';
+import { startMessageButtons } from '../ui/message-buttons';
 import { mountPanel, type Mounted } from '../ui/mount';
 
 let panel: Mounted | null = null;
@@ -29,3 +30,11 @@ const refresh = () => {
 };
 refresh();
 setInterval(refresh, 1500);
+
+// An Export icon next to each message's own Copy button.
+startMessageButtons(document, () => detect(document, new URL(location.href)), {
+  onMore: () => {
+    if (!panel) toggle();
+    else panel.show();
+  },
+});

@@ -1,2 +1,2 @@
 /** Kept in sync with package.json (checked by tests/unit/version.test.ts). */
-export const VERSION = '0.3.1';
+export const VERSION = '0.4.0';

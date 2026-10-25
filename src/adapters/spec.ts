@@ -103,11 +103,23 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
     return { role, ...(model ? { model } : {}), blocks };
   };
 
+  // Per-element caches, checked against the element's text length so a recycled element
+  // (virtual lists reuse them) is never mistaken for the message it showed before.
+  const hashCache = new WeakMap<Element, { len: number; hash: string }>();
+  const contentHash = (el: Element): string => {
+    const text = el.textContent ?? '';
+    const hit = hashCache.get(el);
+    if (hit && hit.len === text.length) return hit.hash;
+    const h = hash(text.slice(0, 400) + text.length);
+    hashCache.set(el, { len: text.length, hash: h });
+    return h;
+  };
+
   /** Stable key from the site, else role + content hash + how often that content repeats in this pass. */
   const keyOf = (f: Found, repeats: Map<string, number>): string => {
     const own = spec.key?.(f.el);
     if (own) return own;
-    const base = `${f.role}:${hash((f.el.textContent ?? '').slice(0, 400))}`;
+    const base = `${f.role}:${contentHash(f.el)}`;
     const n = repeats.get(base) ?? 0;
     repeats.set(base, n + 1);
     return `${base}:${n}`;
@@ -128,6 +140,8 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
     isConversationPage: () => spec.isConversationPage?.(url) || find().length > 0,
     getTitle: () => spec.title(doc)?.trim() || firstPromptTitle(find(), convert) || `${site.label} chat`,
     count: () => find().length,
+    turns: find,
+    read: convert,
     async collect(signal, onProgress) {
       const box = scroller();
       const order: string[] = [];
@@ -179,8 +193,8 @@ export function createSpecAdapter(spec: SiteSpec, { doc, url }: AdapterContext):
         if (!complete) {
           for (let guard = 0; guard < 20000; guard++) {
             const before = box.scrollTop;
-            box.scrollTop = before + Math.max(160, box.clientHeight * 0.75);
-            await quiet(box, signal, 120, 1500);
+            box.scrollTop = before + Math.max(160, box.clientHeight * 0.9);
+            await quiet(box, signal, 60, 1200);
             await harvest();
             if (Math.abs(box.scrollTop - before) < 1) {
               // At the bottom: give a lazy list one more chance to grow.
@@ -226,29 +240,63 @@ async function loadOlder(
   let lastHeight = -1;
   let lastCount = -1;
   let lastFirst: string | undefined;
-  for (let round = 0; round < 5000 && stable < 3; round++) {
+  // Nothing loaded at all: the chat is probably complete already, so a short check will do.
+  // Once older messages have arrived, confirm the start more patiently.
+  let grewEver = false;
+  for (let round = 0; round < 5000 && stable < (grewEver ? 4 : 2); round++) {
     throwIfAborted(signal);
-    // Some sites (ChatGPT) load older messages on wheel input rather than on scroll position.
+    box.scrollTop = -box.scrollHeight;
+    // Some sites (ChatGPT) load older messages on wheel input at the top, not on scroll position.
     box.dispatchEvent(
       new WheelEvent('wheel', { deltaY: -2000, deltaMode: 0, bubbles: true, cancelable: true }),
     );
-    box.scrollTop = -box.scrollHeight;
     // Nudge down and back up: some sites only load more on a fresh scroll event at the top.
     if (stable > 0) {
       box.scrollTop += 40;
       await quiet(box, signal, 60, 300);
       box.scrollTop = -box.scrollHeight;
     }
-    await quiet(box, signal, 450, 4000);
+    // Wait for the page to change (older messages arriving), or give up after a while. Each
+    // round then costs about as long as the site takes to respond.
+    await changed(box, signal, 120, grewEver ? 1200 : 900);
     // Compare by message identity, not element: virtual lists rebuild elements on every scroll.
     const found = keys();
     onProgress({ phase: 'loading', done: found.length });
     const grew = box.scrollHeight !== lastHeight || found.length !== lastCount || found[0] !== lastFirst;
     stable = grew ? 0 : stable + 1;
+    if (grew && round > 0) grewEver = true;
     lastHeight = box.scrollHeight;
     lastCount = found.length;
     lastFirst = found[0];
   }
+}
+
+/** Resolves `idle` ms after the element's subtree stops changing, or after `max` ms if it never changes. */
+function changed(el: Element, signal: AbortSignal, idle: number, max: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const cap = setTimeout(done, max);
+    const observer = new MutationObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(done, idle);
+    });
+    observer.observe(el, { childList: true, subtree: true, characterData: true });
+    const onAbort = () => {
+      cleanup();
+      reject(new DOMException('Export cancelled', 'AbortError'));
+    };
+    signal.addEventListener('abort', onAbort, { once: true });
+    function cleanup() {
+      clearTimeout(timer);
+      clearTimeout(cap);
+      observer.disconnect();
+      signal.removeEventListener('abort', onAbort);
+    }
+    function done() {
+      cleanup();
+      resolve();
+    }
+  });
 }
 
 /** Resolves once the element's subtree has had no changes for `idle` ms (or after `max` ms). */

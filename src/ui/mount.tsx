@@ -5,6 +5,8 @@ import { PANEL_CSS } from './styles';
 
 export interface Mounted {
   toggle(): void;
+  /** Opens the panel if it is closed. */
+  show(): void;
 }
 
 /** Mounts the panel in a Shadow DOM attached to <html>, outside the site's app root. */
@@ -37,5 +39,5 @@ export function mountPanel(doc: Document, url: URL): Mounted {
     render(null, root);
   }
   show();
-  return { toggle: () => (open ? hide() : show()) };
+  return { toggle: () => (open ? hide() : show()), show: () => !open && show() };
 }

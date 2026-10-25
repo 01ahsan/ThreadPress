@@ -1,5 +1,5 @@
 import type { SiteConfig } from '../config/sites';
-import type { Message } from '../ir/types';
+import type { Message, Role } from '../ir/types';
 
 export interface Progress {
   phase: 'loading' | 'reading';
@@ -21,6 +21,10 @@ export interface Adapter {
   getTitle(): string;
   /** Messages currently in the page (cheap; for display only). */
   count(): number;
+  /** Message elements currently in the page, in order, with their roles. */
+  turns(): { el: Element; role: Role }[];
+  /** Converts one message element to IR. */
+  read(turn: { el: Element; role: Role }): Message;
   /** Loads the full history and converts every message to IR, in order. */
   collect(signal: AbortSignal, onProgress: (p: Progress) => void): Promise<CollectedMessage[]>;
 }

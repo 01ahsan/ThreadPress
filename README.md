@@ -28,6 +28,8 @@ Open the [install page](docs/index.html), click **Download raw file**, open the 
 
 For a PDF, choose **Save as PDF** in the print window that opens.
 
+**Just one answer?** Click the export icon next to that message's Copy button, then pick PDF, Word, Markdown or Copy.
+
 Want only a few lines? Highlight them first, then click ThreadPress.
 
 ## Your privacy

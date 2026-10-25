@@ -140,3 +140,39 @@ test('floating button appears on chat pages only and opens the panel', async () 
   await expect(page.locator('threadpress-launcher')).toHaveCount(0);
   await page.close();
 });
+
+test('Export icon next to each Copy button exports just that message and its question', async () => {
+  const page = await context.newPage();
+  await page.route('**/*', (route) => {
+    if (route.request().url() === CHAT_URL) {
+      return route.fulfill({
+        contentType: 'text/html; charset=utf-8',
+        headers: {
+          'content-security-policy':
+            "default-src 'self'; script-src 'nonce-x'; require-trusted-types-for 'script'",
+        },
+        body: readFileSync('tests/fixtures/chatgpt/synthetic-mixed.html', 'utf8'),
+      });
+    }
+    if (route.request().resourceType() === 'image')
+      return route.fulfill({ contentType: 'image/png', body: PIXEL });
+    return route.abort();
+  });
+  await page.goto(CHAT_URL);
+  const icon = page.locator('threadpress-msg').getByRole('button', { name: 'Export this message' });
+  await expect(icon).toHaveCount(1);
+  // It sits right after the site's own Copy button.
+  await expect(page.locator('[data-testid="copy-turn-action-button"] + threadpress-msg')).toHaveCount(1);
+  await icon.click();
+  const menu = page.locator('threadpress-menu');
+  await expect(menu.getByRole('menu')).toBeVisible();
+  await page.screenshot({ path: 'test-results/message-menu.png' });
+  const dl = page.waitForEvent('download');
+  await menu.getByRole('menuitem', { name: 'Markdown', exact: true }).click();
+  const text = readFileSync(await (await dl).path(), 'utf8');
+  expect(text).toContain('Explain E = mc^2 briefly.');
+  expect(text).toContain('Mass–energy equivalence');
+  expect(text).not.toContain('Sort \[3, 1, 2\]');
+  await expect(menu).toHaveCount(0);
+  await page.close();
+});
