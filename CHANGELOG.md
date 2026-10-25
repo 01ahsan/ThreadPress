@@ -2,6 +2,15 @@
 
 All notable changes to ThreadPress. Versions follow [semantic versioning](https://semver.org).
 
+## 1.0.0 (2026-10-25)
+
+First production release.
+
+- Exports ChatGPT, Claude, Gemini, Grok, DeepSeek and Kimi chats to PDF, Word, Markdown, HTML, LaTeX, plain text and JSON, with equations, code, tables and every language intact.
+- Whole chats, chosen messages, or a single message from its own toolbar.
+- One download for Chrome, Edge, Brave and Firefox.
+- The store icon follows Chrome's size guidelines.
+
 ## 0.6.2 (2026-10-25)
 
 - The download now also installs in Firefox (it showed "background.service_worker is currently disabled"). Chrome and Edge need version 121 or newer.
