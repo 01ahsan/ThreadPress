@@ -172,7 +172,7 @@ test('Export icon next to each Copy button exports just that message and its que
   const text = readFileSync(await (await dl).path(), 'utf8');
   expect(text).toContain('Explain E = mc^2 briefly.');
   expect(text).toContain('Mass–energy equivalence');
-  expect(text).not.toContain('Sort \[3, 1, 2\]');
+  expect(text).not.toContain('Sort \\[3, 1, 2\\]');
   await expect(menu).toHaveCount(0);
   await page.close();
 });
