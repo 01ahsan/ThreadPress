@@ -1,0 +1,41 @@
+name: A site doesn't export correctly
+description: Messages missing, wrong order, no export button, or broken formatting on a chat site.
+labels: [site-broken]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Please don't paste your conversation or anything personal.**
+        The most helpful thing you can attach is a page layout file: open ThreadPress on the chat, click **Options**, then **Save page layout for a bug report**. It contains no chat text.
+  - type: dropdown
+    id: site
+    attributes:
+      label: Which site?
+      options: [ChatGPT, Claude, Gemini, Grok, DeepSeek, Kimi]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What went wrong?
+      placeholder: e.g. "Only the last 10 messages were exported" or "No export icon next to messages"
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: e.g. Chrome 141, Edge 141, Firefox 145
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: ThreadPress version
+      description: Shown on your browser's extensions page.
+      placeholder: e.g. 1.0.2
+  - type: textarea
+    id: layout
+    attributes:
+      label: Page layout file
+      description: Drag the file saved with "Save page layout for a bug report" here.

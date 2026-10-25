@@ -1,0 +1,14 @@
+name: Suggest a feature
+description: An idea to make ThreadPress better.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like ThreadPress to do?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it help you?

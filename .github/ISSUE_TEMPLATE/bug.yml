@@ -1,0 +1,30 @@
+name: Something else is wrong
+description: A problem with exporting, a file format, the panel or installing.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "**Please don't paste your conversation or anything personal.**"
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: dropdown
+    id: format
+    attributes:
+      label: Format (if it's about an export)
+      options: ['-', PDF, Word, Markdown, HTML, LaTeX, Text, JSON]
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: e.g. Chrome 141
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: ThreadPress version
+      placeholder: e.g. 1.0.2

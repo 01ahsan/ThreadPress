@@ -14,21 +14,17 @@ export function adapterForSite(id: SiteId, ctx: AdapterContext): Adapter {
 }
 
 /**
- * Prefilled GitHub issue for a broken site. Contains only the site, a path shape with
- * conversation IDs removed, and the ThreadPress version. Nothing is sent automatically.
+ * Opens the "A site doesn't export correctly" issue form, prefilled with only the site, a page
+ * shape with conversation IDs removed, and the ThreadPress version. Nothing is sent automatically.
  */
 export function brokenSiteIssueUrl(url: URL, siteLabel: string): string {
   const pathShape = url.pathname.replace(/[0-9a-f-]{8,}|[A-Za-z0-9_-]{16,}/g, ':id');
-  const body = [
-    `**Site:** ${siteLabel} (${url.hostname})`,
-    `**Page shape:** \`${pathShape}\``,
-    `**ThreadPress version:** ${VERSION}`,
-    `**Browser:** (please fill in, e.g. Chrome 141)`,
-    '',
-    'What happened: ThreadPress could not find the messages on this page.',
-    '',
-    'Please do not paste your conversation or any personal information here.',
-  ].join('\n');
-  const q = new URLSearchParams({ title: `Layout changed: ${siteLabel}`, body, labels: 'site-broken' });
+  const q = new URLSearchParams({
+    template: 'site-broken.yml',
+    title: `Layout changed: ${siteLabel}`,
+    // Field ids from .github/ISSUE_TEMPLATE/site-broken.yml.
+    what: `ThreadPress could not find the messages on ${url.hostname} (page shape ${pathShape}).`,
+    version: VERSION,
+  });
   return `${ISSUES_URL}?${q.toString()}`;
 }
