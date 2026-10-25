@@ -6,7 +6,10 @@ const CROSS_ENGINE = /(fuzz|stress|scale|long-chats)\.spec\.ts$/;
 export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
-  reporter: [['list']],
+  // On GitHub: failures and flaky tests also appear as annotations on the run, and a failing test
+  // gets one retry (a pass on retry is still reported as "flaky", never hidden).
+  reporter: process.env.CI ? [['list'], ['github']] : [['list']],
+  retries: process.env.CI ? 1 : 0,
   use: { acceptDownloads: true },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
